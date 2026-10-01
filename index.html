@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Rapidin - Prototipo Estético Final</title>
+    <title>Rapidin - Prototipo con Carrito Interactivo</title>
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
@@ -31,7 +31,7 @@
                     <i class="fa-solid fa-qrcode" style="font-size: 32px; color: var(--azul-rapidin);"></i>
                 </div>
                 <h3 style="font-family:'Rhodesia'; color:var(--azul-rapidin); font-size:24px;">Comprobante Digital</h3>
-                <p style="font-size:13px; color:var(--gris-texto); margin: 6px 0 16px 0;">Orden <b>#4444</b> • Guiso de Lentejas</p>
+                <p style="font-size:13px; color:var(--gris-texto); margin: 6px 0 16px 0;">Orden <b>#4444</b> • Comida Take Away</p>
                 <div style="background:var(--fondo-app); padding:12px; border-radius:14px; font-size:12px; margin-bottom: 20px; color: var(--azul-rapidin); font-weight: 500;">Presentá este código QR en la ventanilla rápida del buffet universitario.</div>
                 <button onclick="cerrarModal()" style="background:var(--naranja-rapidin); border:none; padding:10px 24px; border-radius:14px; font-weight:700; cursor:pointer; color:var(--azul-rapidin); width: 100%;">Entendido</button>
             </div>
@@ -44,9 +44,16 @@
     <script>
         let modoActual = 'cliente';
         let ordenesNuevas = 0;
-        let tabClienteActiva = 1;
-        let tabBuffetActiva = 'pedidos';
         
+        // Menú completo disponible para el cliente
+        let menuCliente = [
+            { id: 1, nombre: "Guiso de Lentejas (Plato del día)", precio: 12000, qty: 0 },
+            { id: 2, nombre: "Sánguche de Milanesa", precio: 10000, qty: 0 },
+            { id: 3, nombre: "Fideos con salsa", precio: 8500, qty: 0 },
+            { id: 4, nombre: "Café con Medialunas", precio: 4500, qty: 0 },
+            { id: 5, nombre: "Agua Saborizada 500ml", stock: 30, precio: 2000, qty: 0 }
+        ];
+
         let stockBuffet = [
             { nombre: "Guiso de Lentejas", stock: 15 },
             { nombre: "Sánguche de Milanesa", stock: 24 },
@@ -72,9 +79,28 @@
             }
         }
 
+        function agregarAlCarrito(index) {
+            menuCliente[index].qty++;
+            mostrarCliente(1); // Actualiza la vista principal para que se note el carrito
+        }
+
+        function quitarDelCarrito(index) {
+            if(menuCliente[index].qty > 0) {
+                menuCliente[index].qty--;
+                mostrarCliente(1);
+            }
+        }
+
+        function totalCarrito() {
+            return menuCliente.reduce((acc, item) => acc + (item.precio * item.qty), 0);
+        }
+
+        function cantCarrito() {
+            return menuCliente.reduce((acc, item) => acc + item.qty, 0);
+        }
+
         // --- VISTA CLIENTE ---
         function mostrarCliente(id) {
-            tabClienteActiva = id;
             const container = document.getElementById('app-screen');
             const nav = document.getElementById('nav-bar');
             
@@ -90,31 +116,39 @@
                         <span style="font-weight: 800; font-size: 20px; font-family: 'Rhodesia'; color: var(--azul-rapidin);">Rapidin</span>
                         <span style="font-size: 11px; background: #e5e7eb; padding: 4px 10px; border-radius: 20px; font-weight: 600;">UNM Moreno</span>
                     </div>
-                    <div class="plato-banner" onclick="mostrarCliente(3)">
+
+                    <!-- Plato del Día con botón directo para sumar -->
+                    <div class="plato-banner">
                         <div>
-                            <span style="font-size: 10px; text-transform: uppercase; color: var(--naranja-rapidin); font-weight:800; letter-spacing: 0.5px;">Plato del día</span>
+                            <span style="font-size: 10px; text-transform: uppercase; color: var(--naranja-rapidin); font-weight:800;">Plato del día</span>
                             <h2>PLATO<br>DEL DÍA</h2>
                             <p style="font-size:12px; opacity:0.9; margin-top: 4px;">guiso de lentejas • $12.000</p>
                         </div>
-                        <div style="width: 75px; height: 75px; background: rgba(255,255,255,0.1); border-radius: 50%; display: flex; align-items: center; justify-content: center;">
-                            <i class="fa-solid fa-utensils" style="font-size: 24px; color: var(--naranja-rapidin);"></i>
-                        </div>
+                        <button onclick="agregarAlCarrito(0)" style="background:var(--naranja-rapidin); border:none; padding:8px 14px; border-radius:12px; font-weight:700; cursor:pointer; color:var(--azul-rapidin); font-size:12px;">+ Sumar</button>
                     </div>
-                    <div style="font-weight: 700; font-size:14px; color: var(--azul-rapidin); margin-top:2px;">Categorías del Menú:</div>
-                    <div style="display:grid; grid-template-columns: 1fr 1fr; gap:12px;">
-                        <div style="background:var(--azul-rapidin); color:#fff; padding:14px; border-radius:18px; text-align:center; font-weight:600; cursor:pointer; box-shadow: 0 4px 12px rgba(11,41,57,0.1);" onclick="mostrarCliente(3)">
-                            <i class="fa-solid fa-burger" style="display:block; font-size:16px; color:var(--naranja-rapidin); margin-bottom:4px;"></i>Comidas
-                        </div>
-                        <div style="background:var(--azul-rapidin); color:#fff; padding:14px; border-radius:18px; text-align:center; font-weight:600; cursor:pointer; box-shadow: 0 4px 12px rgba(11,41,57,0.1);" onclick="mostrarCliente(3)">
-                            <i class="fa-solid fa-bottle-droplet" style="display:block; font-size:16px; color:var(--naranja-rapidin); margin-bottom:4px;"></i>Bebidas
-                        </div>
-                        <div style="background:var(--azul-rapidin); color:#fff; padding:14px; border-radius:18px; text-align:center; font-weight:600; cursor:pointer; box-shadow: 0 4px 12px rgba(11,41,57,0.1);" onclick="mostrarCliente(3)">
-                            <i class="fa-solid fa-mug-hot" style="display:block; font-size:16px; color:var(--naranja-rapidin); margin-bottom:4px;"></i>Cafetería
-                        </div>
-                        <div style="background:var(--azul-rapidin); color:#fff; padding:14px; border-radius:18px; text-align:center; font-weight:600; cursor:pointer; box-shadow: 0 4px 12px rgba(11,41,57,0.1);" onclick="mostrarCliente(3)">
-                            <i class="fa-solid fa-tag" style="display:block; font-size:16px; color:var(--naranja-rapidin); margin-bottom:4px;"></i>Promos UNM
-                        </div>
+
+                    <div style="font-weight: 700; font-size:14px; color: var(--azul-rapidin); margin-top:2px;">Menú Rápido:</div>
+                    
+                    <div style="display: flex; flex-direction: column; gap: 8px;">
+                        ${menuCliente.slice(1).map((item, idx) => `
+                            <div style="background: #fff; padding: 10px 14px; border-radius: 14px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 5px rgba(0,0,0,0.03);">
+                                <div>
+                                    <div style="font-size: 13px; font-weight: 700; color: var(--azul-rapidin);">${item.nombre}</div>                                     <div style="font-size: 11px; color: var(--gris-texto);">$${item.precio.toLocaleString()}</div>
+                                </div>
+                                <div style="display: flex; align-items: center; gap: 8px;">
+                                    <span style="font-size: 13px; font-weight: 700;">${item.qty}</span>
+                                    <button onclick="agregarAlCarrito(${idx + 1})" style="background: var(--naranja-rapidin); border: none; width: 24px; height: 24px; border-radius: 6px; font-weight: bold; cursor: pointer; color: var(--azul-rapidin);">+</button>
+                                    <button onclick="quitarDelCarrito(${idx + 1})" style="background: #e5e7eb; border: none; width: 24px; height: 24px; border-radius: 6px; font-weight: bold; cursor: pointer;">-</button>
+                                </div>
+                            </div>
+                        `).join('')}
                     </div>
+
+                    ${cantCarrito() > 0 ? `
+                        <div onclick="mostrarCliente(3)" style="background: var(--azul-rapidin); color: #fff; padding: 12px 18px; border-radius: 16px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; font-weight: 700; font-size: 13px; margin-top: auto;">
+                            <span>Ver Pedido (${cantCarrito()} ítems)</span>                             <span>$${totalCarrito().toLocaleString()} ➔</span>
+                        </div>
+                    ` : ''}
                 `;
             } else if(id === 2) {
                 container.innerHTML = `
@@ -123,52 +157,58 @@
                         <button onclick="abrirModal()" style="background:var(--azul-rapidin); color:#fff; border:none; padding:6px 12px; border-radius:10px; font-size:11px; font-weight:600; cursor:pointer;"><i class="fa-solid fa-qrcode"></i> Ver QR</button>
                     </div>
                     <div class="ticket-box">
-                        <p style="font-size:14px; font-weight:700; color: var(--azul-rapidin);">1x Guiso de Lentejas</p>
-                        <p style="font-size:12px; color:var(--gris-texto); margin-top:8px;">Estado del pedido:</p>
-                        <div style="background: #fef3c7; color: #b45309; padding: 6px 12px; border-radius: 8px; font-size: 12px; font-weight: 700; display: inline-block; margin-top: 4px;">En preparación en cocina</div>
+                        ${menuCliente.filter(i => i.qty > 0).map(i => `
+                            <div style="font-size:13px; font-weight:600; display:flex; justify-content:space-between; margin-bottom:4px;">
+                                <span>${i.qty}x ${i.nombre}</span>                                 <span>$${(i.precio * i.qty).toLocaleString()}</span>
+                            </div>
+                        `).join('') || '<p style="font-size:12px; color:#666;">No hay productos en el ticket actual.</p>'}
+                        <p style="font-size:12px; color:var(--gris-texto); margin-top:10px;">Estado: <span style="color:#b45309; font-weight:700;">En preparación en cocina</span></p>
                     </div>
                     <div class="badge-codigo">CODIGO DE RETIRO RÁPIDO</div>
                     <div class="codigo-grande">4444</div>
                 `;
             } else if(id === 3) {
                 container.innerHTML = `
-                    <div style="font-weight: 700; color: var(--azul-rapidin); margin-top: 5px; font-size: 15px;">Seleccioná medio de pago:</div>
-                    <div class="pay-option" onclick="confirmarCompra()">
-                        <div style="width: 40px; height: 40px; background: rgba(253,151,2,0.15); border-radius: 12px; display: flex; align-items: center; justify-content: center;">
-                            <i class="fa-solid fa-mobile-screen-button" style="font-size:18px; color:var(--naranja-rapidin);"></i>
-                        </div>
-                        <div>
-                            <div style="font-size: 14px; color: var(--azul-rapidin);">Mercado Pago</div>
-                            <div style="font-size: 11px; color: var(--gris-texto); font-weight: 400;">QR o dinero en cuenta</div>
-                        </div>
+                    <div style="font-weight: 700; color: var(--azul-rapidin); margin-top: 5px; font-size: 15px;">Resumen y Pago:</div>
+                    <div style="background: #fff; padding: 12px; border-radius: 14px; font-size: 13px; margin-bottom: 5px;">
+                        <b>Total a abonar: $${totalCarrito().toLocaleString()}</b>
                     </div>
                     <div class="pay-option" onclick="confirmarCompra()">
-                        <div style="width: 40px; height: 40px; background: rgba(253,151,2,0.15); border-radius: 12px; display: flex; align-items: center; justify-content: center;">
-                            <i class="fa-solid fa-building-columns" style="font-size:18px; color:var(--naranja-rapidin);"></i>
+                        <div style="width: 35px; height: 35px; background: rgba(253,151,2,0.15); border-radius: 10px; display: flex; align-items: center; justify-content: center;">
+                            <i class="fa-solid fa-mobile-screen-button" style="font-size:16px; color:var(--naranja-rapidin);"></i>
                         </div>
-                        <div>
-                            <div style="font-size: 14px; color: var(--azul-rapidin);">Transferencia Bancaria</div>
-                            <div style="font-size: 11px; color: var(--gris-texto); font-weight: 400;">Alias oficial UNM Buffet</div>
-                        </div>
+                        <div style="font-size: 13px;">Mercado Pago (QR)</div>
                     </div>
                     <div class="pay-option" onclick="confirmarCompra()">
-                        <div style="width: 40px; height: 40px; background: rgba(253,151,2,0.15); border-radius: 12px; display: flex; align-items: center; justify-content: center;">
-                            <i class="fa-solid fa-money-bill-wave" style="font-size:18px; color:var(--naranja-rapidin);"></i>
+                        <div style="width: 35px; height: 35px; background: rgba(253,151,2,0.15); border-radius: 10px; display: flex; align-items: center; justify-content: center;">
+                            <i class="fa-solid fa-building-columns" style="font-size:16px; color:var(--naranja-rapidin);"></i>
                         </div>
-                        <div>
-                            <div style="font-size: 14px; color: var(--azul-rapidin);">Efectivo en Ventanilla</div>
-                            <div style="font-size: 11px; color: var(--gris-texto); font-weight: 400;">Pago rápido en mostrador</div>
+                        <div style="font-size: 13px;">Transferencia Bancaria (Alias UNM)</div>
+                    </div>
+                    <div class="pay-option" onclick="confirmarCompra()">
+                        <div style="width: 35px; height: 35px; background: rgba(253,151,2,0.15); border-radius: 10px; display: flex; align-items: center; justify-content: center;">
+                            <i class="fa-solid fa-money-bill-wave" style="font-size:16px; color:var(--naranja-rapidin);"></i>
                         </div>
+                        <div style="font-size: 13px;">Efectivo en Ventanilla Flash</div>
                     </div>
                 `;
             }
         }
 
         function confirmarCompra() {
+            if(cantCarrito() === 0) {
+                alert("Por favor, sumá al menos un producto al pedido.");
+                return;
+            }
+
             ordenesNuevas++;
             const badge = document.getElementById('notif-badge');
             badge.style.display = 'flex';
             badge.innerText = ordenesNuevas;
+
+            // Registrar en el panel del buffet
+            let detalleStr = menuCliente.filter(i => i.qty > 0).map(i => `${i.qty}x ${i.nombre}`).join(', ');
+            pedidosBuffet.unshift({ id: 4444, detalle: detalleStr, total: totalCarrito(), estado: "En preparación" });
 
             mostrarCliente(2);
         }
@@ -178,7 +218,6 @@
 
         // --- VISTA BUFFET ---
         function mostrarBuffet(seccion) {
-            tabBuffetActiva = seccion;
             const container = document.getElementById('app-screen');
             const nav = document.getElementById('nav-bar');
 
