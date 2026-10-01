@@ -67,7 +67,8 @@ function cantCarrito() {
 }
 
 function renderizarMenuPrincipal() {
-    document.getElementById('qty-plato-0').innerText = menuCliente[0].qty;
+    const qtyPlato0 = document.getElementById('qty-plato-0');
+    if (qtyPlato0) qtyPlato0.innerText = menuCliente[0].qty;
     
     let listaHtml = document.getElementById('lista-menu-html');
     if (listaHtml) {
@@ -135,9 +136,7 @@ function mostrarCliente(id) {
             </div>
 
             <div style="font-weight: 700; font-size:14px; color: var(--azul-rapidin); margin-top:2px;">Menú Rápido:</div>
-            
             <div style="display: flex; flex-direction: column; gap: 8px;" id="lista-menu-html"></div>
-
             <div id="contenedor-boton-ver-pedido"></div>
         `;
         renderizarMenuPrincipal();
@@ -342,4 +341,15 @@ function modificarStock(index, delta) {
     mostrarBuffet('stock');
 }
 
-mostrarCliente(1);
+// Ocultar el loader inicial suavemente al cargar la página
+window.addEventListener('load', () => {
+    setTimeout(() => {
+        const loader = document.getElementById('app-loader');
+        if(loader) {
+            loader.style.opacity = '0';
+            setTimeout(() => loader.style.display = 'none', 500);
+        }
+    }, 800);
+});
+
+renderizarMenuPrincipal();
