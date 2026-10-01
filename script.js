@@ -26,6 +26,8 @@ let stockBuffet = [
 ];
 
 let pedidosBuffet = [];
+let historialPedidos = [];
+let tabBuffetActiva = 'pedidos';
 
 function cambiarModo(modo) {
     modoActual = modo;
@@ -37,12 +39,20 @@ function cambiarModo(modo) {
     } else {
         ordenesNuevas = 0;
         document.getElementById('notif-badge').style.display = 'none';
-        mostrarBuffet('pedidos');
+        mostrarBuffet(tabBuffetActiva);
     }
 }
 
 function agregarAlCarrito(index) {
-    menuCliente[index].qty++;
+    let itemMenu = menuCliente[index];
+    let itemStock = stockBuffet.find(s => s.nombre === itemMenu.nombre);
+
+    if (itemStock && itemMenu.qty >= itemStock.stock) {
+        alert(`No hay más stock disponible de ${itemMenu.nombre}. (Stock actual: ${itemStock.stock})`);
+        return;
+    }
+
+    itemMenu.qty++;
     actualizarVistaActual();
 }
 
@@ -69,22 +79,50 @@ function cantCarrito() {
 function renderizarMenuPrincipal() {
     const qtyPlato0 = document.getElementById('qty-plato-0');
     if (qtyPlato0) qtyPlato0.innerText = menuCliente[0].qty;
+
+    let stockPlato0 = stockBuffet.find(s => s.nombre === menuCliente[0].nombre);
+    let contenedorPlatoBtn = document.getElementById('contenedor-plato-dia-btn');
+    
+    if (stockPlato0 && stockPlato0.stock <= 0) {
+        if(contenedorPlatoBtn) {
+            contenedorPlatoBtn.innerHTML = `<span style="font-size:11px; background:#ef4444; color:#fff; padding:4px 8px; border-radius:8px; font-weight:bold;">Agotado</span>`;
+        }
+        if (menuCliente[0].qty > stockPlato0.stock) menuCliente[0].qty = stockPlato0.stock;
+    } else {
+        if(contenedorPlatoBtn && !contenedorPlatoBtn.innerHTML.includes('agregarAlCarrito')) {
+            contenedorPlatoBtn.innerHTML = `
+                <button onclick="quitarDelCarrito(0)" style="background: rgba(0,0,0,0.3); border: none; width: 28px; height: 28px; border-radius: 8px; font-weight: bold; color: #fff; cursor: pointer;">-</button>
+                <span id="qty-plato-0" style="color: #fff; font-weight: bold; font-size: 14px;">${menuCliente[0].qty}</span>
+                <button onclick="agregarAlCarrito(0)" style="background: var(--naranja-rapidin); border: none; width: 28px; height: 28px; border-radius: 8px; font-weight: bold; color: var(--azul-rapidin); cursor: pointer;">+</button>
+            `;
+        }
+    }
     
     let listaHtml = document.getElementById('lista-menu-html');
     if (listaHtml) {
-        listaHtml.innerHTML = menuCliente.slice(1).map((item, idx) => `
-            <div style="background: #fff; padding: 10px 14px; border-radius: 14px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 5px rgba(0,0,0,0.03);">
-                <div>
-                    <div style="font-size: 13px; font-weight: 700; color: var(--azul-rapidin);">${item.nombre}</div>
-                    <div style="font-size: 11px; color: var(--gris-texto);">$${item.precio.toLocaleString()}</div>
+        listaHtml.innerHTML = menuCliente.slice(1).map((item, idx) => {
+            let realIdx = idx + 1;
+            let stockItem = stockBuffet.find(s => s.nombre === item.nombre);
+            let sinStock = stockItem && stockItem.stock <= 0;
+
+            if (sinStock && item.qty > stockItem.stock) {
+                item.qty = stockItem.stock;
+            }
+
+            return `
+                <div style="background: #fff; padding: 10px 14px; border-radius: 14px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 5px rgba(0,0,0,0.03);">
+                    <div>
+                        <div style="font-size: 13px; font-weight: 700; color: var(--azul-rapidin);">${item.nombre}</div>
+                        <div style="font-size: 11px; color: var(--gris-texto);">$${item.precio.toLocaleString()} ${sinStock ? '• <b style="color:#ef4444;">Agotado</b>' : `• Stock: ${stockItem.stock}`}</div>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <button onclick="quitarDelCarrito(${realIdx})" style="background: #e5e7eb; border: none; width: 26px; height: 26px; border-radius: 8px; font-weight: bold; cursor: pointer;">-</button>
+                        <span style="font-size: 13px; font-weight: 700; min-width: 12px; text-align: center;">${item.qty}</span>
+                        ${sinStock ? '' : `<button onclick="agregarAlCarrito(${realIdx})" style="background: var(--naranja-rapidin); border: none; width: 26px; height: 26px; border-radius: 8px; font-weight: bold; cursor: pointer; color: var(--azul-rapidin);">+</button>`}
+                    </div>
                 </div>
-                <div style="display: flex; align-items: center; gap: 8px;">
-                    <button onclick="quitarDelCarrito(${idx + 1})" style="background: #e5e7eb; border: none; width: 26px; height: 26px; border-radius: 8px; font-weight: bold; cursor: pointer;">-</button>
-                    <span style="font-size: 13px; font-weight: 700; min-width: 12px; text-align: center;">${item.qty}</span>
-                    <button onclick="agregarAlCarrito(${idx + 1})" style="background: var(--naranja-rapidin); border: none; width: 26px; height: 26px; border-radius: 8px; font-weight: bold; cursor: pointer; color: var(--azul-rapidin);">+</button>
-                </div>
-            </div>
-        `).join('');
+            `;
+        }).join('');
     }
 
     let contenedorBoton = document.getElementById('contenedor-boton-ver-pedido');
@@ -128,7 +166,7 @@ function mostrarCliente(id) {
                     <h2>PLATO<br>DEL DÍA</h2>
                     <p style="font-size:12px; opacity:0.9; margin-top: 4px;">guiso de lentejas • $12.000</p>
                 </div>
-                <div style="display: flex; align-items: center; gap: 6px;">
+                <div style="display: flex; align-items: center; gap: 6px;" id="contenedor-plato-dia-btn">
                     <button onclick="quitarDelCarrito(0)" style="background: rgba(0,0,0,0.3); border: none; width: 28px; height: 28px; border-radius: 8px; font-weight: bold; color: #fff; cursor: pointer;">-</button>
                     <span id="qty-plato-0" style="color: #fff; font-weight: bold; font-size: 14px;">0</span>
                     <button onclick="agregarAlCarrito(0)" style="background: var(--naranja-rapidin); border: none; width: 28px; height: 28px; border-radius: 8px; font-weight: bold; color: var(--azul-rapidin); cursor: pointer;">+</button>
@@ -153,22 +191,31 @@ function mostrarCliente(id) {
             return;
         }
 
-        let esListo = pedidoActual.estado === "Listo para retirar" || pedidoActual.estado === "Entregado";
-        let colorEstadoBg = esListo ? "#d1fae5" : "#fef3c7";
-        let colorEstadoTxt = esListo ? "#065f46" : "#b45309";
+        let esListo = pedidoActual.estado === "Listo para retirar";
+        let esEntregado = pedidoActual.estado === "Entregado";
+        let colorEstadoBg = esEntregado ? "#e5e7eb" : (esListo ? "#d1fae5" : "#fef3c7");
+        let colorEstadoTxt = esEntregado ? "#374151" : (esListo ? "#065f46" : "#b45309");
 
         container.innerHTML = `
             <div style="font-weight: 700; color: var(--azul-rapidin); margin-top: 5px; display:flex; justify-content:space-between; align-items:center;">
                 <span style="font-size: 15px;">Tu Ticket Activo</span>
-                <button onclick="abrirModal()" style="background:var(--azul-rapidin); color:#fff; border:none; padding:6px 12px; border-radius:10px; font-size:11px; font-weight:600; cursor:pointer;"><i class="fa-solid fa-qrcode"></i> Ver QR</button>
+                ${!esEntregado ? `<button onclick="abrirModal()" style="background:var(--azul-rapidin); color:#fff; border:none; padding:6px 12px; border-radius:10px; font-size:11px; font-weight:600; cursor:pointer;"><i class="fa-solid fa-qrcode"></i> Ver QR</button>` : ''}
             </div>
             <div class="ticket-box">
                 <p style="font-size:14px; font-weight:700; color: var(--azul-rapidin);">${pedidoActual.detalleText}</p>
                 <p style="font-size:12px; color:var(--gris-texto); margin-top:8px;">Estado del pedido:</p>
                 <div style="background: ${colorEstadoBg}; color: ${colorEstadoTxt}; padding: 6px 12px; border-radius: 8px; font-size: 12px; font-weight: 700; display: inline-block; margin-top: 4px;">${pedidoActual.estado}</div>
             </div>
-            <div class="badge-codigo">CODIGO DE RETIRO RÁPIDO</div>
-            <div class="codigo-grande">${pedidoActual.idNro}</div>
+            
+            ${esEntregado ? `
+                <div style="text-align:center; margin-top:10px;">
+                    <p style="font-size:12px; color:var(--gris-texto); margin-bottom:10px;">¡Gracias por usar Rapidin!</p>
+                    <button onclick="reiniciarPedido()" style="background:var(--naranja-rapidin); border:none; padding:12px; border-radius:14px; font-weight:700; cursor:pointer; color:var(--azul-rapidin); width:100%;">Hacer Nuevo Pedido</button>
+                </div>
+            ` : `
+                <div class="badge-codigo">CODIGO DE RETIRO RÁPIDO</div>
+                <div class="codigo-grande">${pedidoActual.idNro}</div>
+            `}
         `;
     } else if(id === 3) {
         let itemsEnCarrito = menuCliente.filter(i => i.qty > 0);
@@ -233,6 +280,18 @@ function procesarPagoYGenerarCodigo() {
         return;
     }
 
+    for (let itemCliente of menuCliente) {
+        if (itemCliente.qty > 0) {
+            let itemStock = stockBuffet.find(s => s.nombre === itemCliente.nombre);
+            if (itemStock && itemCliente.qty > itemStock.stock) {
+                alert(`No hay suficiente stock para ${itemCliente.nombre}. Stock disponible: ${itemStock.stock}`);
+                return;
+            }
+        }
+    }
+
+    alert("¡Pago acreditado con éxito! Generando orden...");
+
     menuCliente.forEach(itemCliente => {
         if(itemCliente.qty > 0) {
             let itemStock = stockBuffet.find(s => s.nombre === itemCliente.nombre);
@@ -270,16 +329,23 @@ function procesarPagoYGenerarCodigo() {
     mostrarCliente(2);
 }
 
+function reiniciarPedido() {
+    pedidoActual = { idNro: null, estado: "Sin confirmar", detalleText: "", total: 0 };
+    mostrarCliente(1);
+}
+
 function abrirModal() { document.getElementById('modal-comprobante').style.display = 'flex'; }
 function cerrarModal() { document.getElementById('modal-comprobante').style.display = 'none'; }
 
 // --- VISTA BUFFET ---
 function mostrarBuffet(seccion) {
+    tabBuffetActiva = seccion;
     const container = document.getElementById('app-screen');
     const nav = document.getElementById('nav-bar');
 
     nav.innerHTML = `
         <button class="nav-icon ${seccion==='pedidos'?'active':''}" onclick="mostrarBuffet('pedidos')"><i class="fa-solid fa-list-check"></i> Órdenes</button>
+        <button class="nav-icon ${seccion==='historial'?'active':''}" onclick="mostrarBuffet('historial')"><i class="fa-solid fa-clock-rotate-left"></i> Historial</button>
         <button class="nav-icon ${seccion==='stock'?'active':''}" onclick="mostrarBuffet('stock')"><i class="fa-solid fa-boxes-stacked"></i> Stock</button>
     `;
 
@@ -299,6 +365,19 @@ function mostrarBuffet(seccion) {
                 </div>
             `).join('') : '<p style="text-align:center; color:var(--gris-texto); margin-top:40px; font-size:13px;">No hay órdenes entrantes en este momento.</p>'}
         `;
+    } else if(seccion === 'historial') {
+        container.innerHTML = `
+            <div class="buffet-header">Historial del Día</div>
+            ${historialPedidos.length > 0 ? historialPedidos.map(ord => `
+                <div style="background: #fff; border-radius: 18px; padding: 14px; box-shadow: 0 2px 8px rgba(0,0,0,0.03); border-left: 6px solid #10b981;">
+                    <div style="display:flex; justify-content:space-between; font-weight:700; font-size:14px;">
+                        <span style="color:var(--azul-rapidin);">Orden #${ord.id}</span>
+                        <span style="color:#059669;">Entregado</span>
+                    </div>
+                    <p style="font-size:12px; color:#4b5563; margin-top:4px;">${ord.detalle}</p>                     <div style="font-size:11px; color:var(--gris-texto); margin-top:6px;">Total recaudado: <b>$${ord.total.toLocaleString()}</b></div>
+                </div>
+            `).join('') : '<p style="text-align:center; color:var(--gris-texto); margin-top:40px; font-size:13px;">Aún no hay pedidos entregados en el historial.</p>'}
+        `;
     } else {
         container.innerHTML = `
             <div class="buffet-header">Control de Stock Diario</div>
@@ -306,11 +385,12 @@ function mostrarBuffet(seccion) {
                 <div class="stock-control-card">
                     <div>
                         <h4 style="font-size:13px; font-weight:700; color:var(--azul-rapidin);">${item.nombre}</h4>
-                        <p style="font-size:11px; color:var(--gris-texto);">Disponibles: <b>${item.stock} u.</b></p>
+                        <p style="font-size:11px; color:var(--gris-texto);">Disponibles actualmente</p>
                     </div>
-                    <div style="display:flex; gap:8px;">
-                        <button onclick="modificarStock(${idx}, -1)" style="background:#f3f4f6; border:1px solid #d1d5db; width:30px; height:30px; border-radius:10px; font-weight:bold; cursor:pointer;">-</button>
-                        <button onclick="modificarStock(${idx}, 1)" style="background:#f3f4f6; border:1px solid #d1d5db; width:30px; height:30px; border-radius:10px; font-weight:bold; cursor:pointer;">+</button>
+                    <div style="display:flex; gap:6px; align-items: center;">
+                        <button onclick="modificarStock(${idx}, -1)" style="background:#f3f4f6; border:1px solid #d1d5db; width:26px; height:26px; border-radius:8px; font-weight:bold; cursor:pointer;">-</button>
+                        <input type="number" value="${item.stock}" min="0" onchange="actualizarStockTipeado(${idx}, this.value)" style="width: 45px; text-align: center; border: 1px solid #d1d5db; border-radius: 8px; padding: 4px; font-weight: bold; font-size: 13px;">
+                        <button onclick="modificarStock(${idx}, 1)" style="background:#f3f4f6; border:1px solid #d1d5db; width:26px; height:26px; border-radius:8px; font-weight:bold; cursor:pointer;">+</button>
                     </div>
                 </div>
             `).join('')}
@@ -318,18 +398,27 @@ function mostrarBuffet(seccion) {
     }
 }
 
+function actualizarStockTipeado(index, valor) {
+    let nuevoValor = parseInt(valor);
+    if (isNaN(nuevoValor) || nuevoValor < 0) nuevoValor = 0;
+    stockBuffet[index].stock = nuevoValor;
+}
+
 function cambiarEstado(index) {
     let estados = ["Recibido", "En preparación", "Listo para retirar", "Entregado"];
     let ordenActual = pedidosBuffet[index];
     let actualIdx = estados.indexOf(ordenActual.estado);
 
-    if(actualIdx < estados.length - 1) {
+    if (actualIdx < estados.length - 1) {
         ordenActual.estado = estados[actualIdx + 1];
-    } else {
-        ordenActual.estado = "Entregado";
+        
+        if (ordenActual.estado === "Entregado") {
+            pedidosBuffet.splice(index, 1);
+            historialPedidos.unshift(ordenActual);
+        }
     }
 
-    if(pedidoActual.idNro === ordenActual.id) {
+    if (pedidoActual.idNro === ordenActual.id) {
         pedidoActual.estado = ordenActual.estado;
     }
 
@@ -341,7 +430,7 @@ function modificarStock(index, delta) {
     mostrarBuffet('stock');
 }
 
-// Ocultar el loader inicial suavemente al cargar la página
+// Ocultar el spinner inicial suavemente
 window.addEventListener('load', () => {
     setTimeout(() => {
         const loader = document.getElementById('app-loader');
