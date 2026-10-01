@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Rapidin - Buffet UNM</title>
     <link rel="stylesheet" href="styles.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
 
@@ -13,8 +12,6 @@
     <div id="app-loader" style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: #0b2939; z-index: 9999; display: flex; flex-direction: column; justify-content: center; align-items: center; transition: opacity 0.5s ease;">
         <h1 style="font-family: 'Rhodesia'; color: var(--naranja-rapidin); font-size: 52px; letter-spacing: 2px; margin-bottom: 4px;">Rapidin</h1>
         <p style="color: #f4ecde; font-size: 13px; font-weight: 500; opacity: 0.8; margin-bottom: 24px;">Buffet Universitario UNM</p>
-        
-        <!-- Anillo minimalista giratorio -->
         <div class="minimal-spinner"></div>
     </div>
 
@@ -60,7 +57,7 @@
         <div id="modal-comprobante" class="modal-overlay" style="display: none;">
             <div class="modal-content">
                 <div style="background: var(--fondo-app); width: 70px; height: 70px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 12px auto;">
-                    <i class="fa-solid fa-qrcode" style="font-size: 32px; color: var(--azul-rapidin);"></i>
+                    <svg style="width:32px; height:32px; fill:var(--azul-rapidin);" viewBox="0 0 24 24"><path d="M2 9V3h6v2H4v4H2m14-6h6v6h-2V5h-4V3M2 15h2v4h4v2H2v-6m20 0v6h-6v-2h4v-4h2M7 9h10v6H7V9Z"/></svg>
                 </div>
                 <h3 style="font-family:'Rhodesia'; color:var(--azul-rapidin); font-size:24px;">Comprobante Digital</h3>
                 <p style="font-size:13px; color:var(--gris-texto); margin: 6px 0 16px 0;">Orden <b id="modal-nro-orden">#----</b> • Comida Take Away</p>
@@ -69,8 +66,21 @@
             </div>
         </div>
 
-        <!-- NAVEGACIÓN INFERIOR -->
-        <nav class="bottom-nav" id="nav-bar"></nav>
+        <!-- NAVEGACIÓN INFERIOR (Fija en HTML para evitar vacíos al cargar) -->
+        <nav class="bottom-nav" id="nav-bar">
+            <button class="nav-icon active" onclick="mostrarCliente(1)">
+                <svg viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+                Menú
+            </button>
+            <button class="nav-icon" onclick="mostrarCliente(2)">
+                <svg viewBox="0 0 24 24"><path d="M21 5c-1.11 0-2 .89-2 2v2H5V7c0-1.11-.89-2-2-2s-2 .89-2 2v12c0 1.1.9 2 2 2h18c1.1 0 2-.9 2-2V7c0-1.11-.9-2-2-2m0 14H3V9h18z"/></svg>
+                Ticket
+            </button>
+            <button class="nav-icon" onclick="mostrarCliente(3)">
+                <svg viewBox="0 0 24 24"><path d="M21 18v1c0 1.1-.9 2-2 2H5c-1.11 0-2-.9-2-2V5c0-1.1.89-2 2-2h14c1.1 0 2 .9 2 2v1h-9c-1.11 0-2 .9-2 2v8c0 1.1.89 2 2 2zm-9-2h10V8H12zm4-2.5c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5z"/></svg>
+                Pago
+            </button>
+        </nav>
     </div>
 
     <script src="script.js"></script>
