@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rapidin - Prototipo Estético Final</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+
+    <!-- Selector de vistas superior -->
+    <div class="mode-selector">
+        <button id="btn-cliente" class="mode-btn active" onclick="cambiarModo('cliente')">Vista Alumno</button>
+        <button id="btn-buffet" class="mode-btn" onclick="cambiarModo('buffet')">
+            Vista Buffet
+            <span id="notif-badge" class="notification-badge" style="display: none;">1</span>
+        </button>
+    </div>
+
+    <div class="phone-frame">
+        <div class="phone-header-notch"></div>
+
+        <!-- CONTENIDO DINÁMICO -->
+        <div id="app-screen" class="screen-content"></div>
+
+        <!-- MODAL COMPROBANTE -->
+        <div id="modal-comprobante" class="modal-overlay" style="display: none;">
+            <div class="modal-content">
+                <div style="background: var(--fondo-app); width: 70px; height: 70px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 12px auto;">
+                    <i class="fa-solid fa-qrcode" style="font-size: 32px; color: var(--azul-rapidin);"></i>
+                </div>
+                <h3 style="font-family:'Rhodesia'; color:var(--azul-rapidin); font-size:24px;">Comprobante Digital</h3>
+                <p style="font-size:13px; color:var(--gris-texto); margin: 6px 0 16px 0;">Orden <b>#4444</b> • Guiso de Lentejas</p>
+                <div style="background:var(--fondo-app); padding:12px; border-radius:14px; font-size:12px; margin-bottom: 20px; color: var(--azul-rapidin); font-weight: 500;">Presentá este código QR en la ventanilla rápida del buffet universitario.</div>
+                <button onclick="cerrarModal()" style="background:var(--naranja-rapidin); border:none; padding:10px 24px; border-radius:14px; font-weight:700; cursor:pointer; color:var(--azul-rapidin); width: 100%;">Entendido</button>
+            </div>
+        </div>
+
+        <!-- NAVEGACIÓN INFERIOR -->
+        <nav class="bottom-nav" id="nav-bar"></nav>
+    </div>
+
+    <script>
+        let modoActual = 'cliente';
+        let ordenesNuevas = 0;
+        let tabClienteActiva = 1;
+        let tabBuffetActiva = 'pedidos';
+        
+        let stockBuffet = [
+            { nombre: "Guiso de Lentejas", stock: 15 },
+            { nombre: "Sánguche de Milanesa", stock: 24 },
+            { nombre: "Café con Medialunas", stock: 40 },
+            { nombre: "Agua Saborizada 500ml", stock: 30 }
+        ];
+
+        let pedidosBuffet = [
+            { id: 4444, detalle: "1x Guiso de Lentejas", total: 12000, estado: "En preparación" }
+        ];
+
+        function cambiarModo(modo) {
+            modoActual = modo;
+            document.getElementById('btn-cliente').classList.toggle('active', modo === 'cliente');
+            document.getElementById('btn-buffet').classList.toggle('active', modo === 'buffet');
+            
+            if(modo === 'cliente') {
+                mostrarCliente(1);
+            } else {
+                ordenesNuevas = 0;
+                document.getElementById('notif-badge').style.display = 'none';
+                mostrarBuffet('pedidos');
+            }
+        }
+
+        // --- VISTA CLIENTE ---
+        function mostrarCliente(id) {
+            tabClienteActiva = id;
+            const container = document.getElementById('app-screen');
+            const nav = document.getElementById('nav-bar');
+            
+            nav.innerHTML = `
+                <button class="nav-icon ${id===1?'active':''}" onclick="mostrarCliente(1)"><i class="fa-solid fa-house"></i></button>
+                <button class="nav-icon ${id===2?'active':''}" onclick="mostrarCliente(2)"><i class="fa-solid fa-ticket"></i></button>
+                <button class="nav-icon ${id===3?'active':''}" onclick="mostrarCliente(3)"><i class="fa-solid fa-wallet"></i></button>
+            `;
+
+            if(id === 1) {
+                container.innerHTML = `
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 5px;">
+                        <span style="font-weight: 800; font-size: 20px; font-family: 'Rhodesia'; color: var(--azul-rapidin);">Rapidin</span>
+                        <span style="font-size: 11px; background: #e5e7eb; padding: 4px 10px; border-radius: 20px; font-weight: 600;">UNM Moreno</span>
+                    </div>
+                    <div class="plato-banner" onclick="mostrarCliente(3)">
+                        <div>
+                            <span style="font-size: 10px; text-transform: uppercase; color: var(--naranja-rapidin); font-weight:800; letter-spacing: 0.5px;">Plato del día</span>
+                            <h2>PLATO<br>DEL DÍA</h2>
+                            <p style="font-size:12px; opacity:0.9; margin-top: 4px;">guiso de lentejas • $12.000</p>
+                        </div>
+                        <div style="width: 75px; height: 75px; background: rgba(255,255,255,0.1); border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                            <i class="fa-solid fa-utensils" style="font-size: 24px; color: var(--naranja-rapidin);"></i>
+                        </div>
+                    </div>
+                    <div style="font-weight: 700; font-size:14px; color: var(--azul-rapidin); margin-top:2px;">Categorías del Menú:</div>
+                    <div style="display:grid; grid-template-columns: 1fr 1fr; gap:12px;">
+                        <div style="background:var(--azul-rapidin); color:#fff; padding:14px; border-radius:18px; text-align:center; font-weight:600; cursor:pointer; box-shadow: 0 4px 12px rgba(11,41,57,0.1);" onclick="mostrarCliente(3)">
+                            <i class="fa-solid fa-burger" style="display:block; font-size:16px; color:var(--naranja-rapidin); margin-bottom:4px;"></i>Comidas
+                        </div>
+                        <div style="background:var(--azul-rapidin); color:#fff; padding:14px; border-radius:18px; text-align:center; font-weight:600; cursor:pointer; box-shadow: 0 4px 12px rgba(11,41,57,0.1);" onclick="mostrarCliente(3)">
+                            <i class="fa-solid fa-bottle-droplet" style="display:block; font-size:16px; color:var(--naranja-rapidin); margin-bottom:4px;"></i>Bebidas
+                        </div>
+                        <div style="background:var(--azul-rapidin); color:#fff; padding:14px; border-radius:18px; text-align:center; font-weight:600; cursor:pointer; box-shadow: 0 4px 12px rgba(11,41,57,0.1);" onclick="mostrarCliente(3)">
+                            <i class="fa-solid fa-mug-hot" style="display:block; font-size:16px; color:var(--naranja-rapidin); margin-bottom:4px;"></i>Cafetería
+                        </div>
+                        <div style="background:var(--azul-rapidin); color:#fff; padding:14px; border-radius:18px; text-align:center; font-weight:600; cursor:pointer; box-shadow: 0 4px 12px rgba(11,41,57,0.1);" onclick="mostrarCliente(3)">
+                            <i class="fa-solid fa-tag" style="display:block; font-size:16px; color:var(--naranja-rapidin); margin-bottom:4px;"></i>Promos UNM
+                        </div>
+                    </div>
+                `;
+            } else if(id === 2) {
+                container.innerHTML = `
+                    <div style="font-weight: 700; color: var(--azul-rapidin); margin-top: 5px; display:flex; justify-content:space-between; align-items:center;">
+                        <span style="font-size: 15px;">Tu Ticket Activo</span>
+                        <button onclick="abrirModal()" style="background:var(--azul-rapidin); color:#fff; border:none; padding:6px 12px; border-radius:10px; font-size:11px; font-weight:600; cursor:pointer;"><i class="fa-solid fa-qrcode"></i> Ver QR</button>
+                    </div>
+                    <div class="ticket-box">
+                        <p style="font-size:14px; font-weight:700; color: var(--azul-rapidin);">1x Guiso de Lentejas</p>
+                        <p style="font-size:12px; color:var(--gris-texto); margin-top:8px;">Estado del pedido:</p>
+                        <div style="background: #fef3c7; color: #b45309; padding: 6px 12px; border-radius: 8px; font-size: 12px; font-weight: 700; display: inline-block; margin-top: 4px;">En preparación en cocina</div>
+                    </div>
+                    <div class="badge-codigo">CODIGO DE RETIRO RÁPIDO</div>
+                    <div class="codigo-grande">4444</div>
+                `;
+            } else if(id === 3) {
+                container.innerHTML = `
+                    <div style="font-weight: 700; color: var(--azul-rapidin); margin-top: 5px; font-size: 15px;">Seleccioná medio de pago:</div>
+                    <div class="pay-option" onclick="confirmarCompra()">
+                        <div style="width: 40px; height: 40px; background: rgba(253,151,2,0.15); border-radius: 12px; display: flex; align-items: center; justify-content: center;">
+                            <i class="fa-solid fa-mobile-screen-button" style="font-size:18px; color:var(--naranja-rapidin);"></i>
+                        </div>
+                        <div>
+                            <div style="font-size: 14px; color: var(--azul-rapidin);">Mercado Pago</div>
+                            <div style="font-size: 11px; color: var(--gris-texto); font-weight: 400;">QR o dinero en cuenta</div>
+                        </div>
+                    </div>
+                    <div class="pay-option" onclick="confirmarCompra()">
+                        <div style="width: 40px; height: 40px; background: rgba(253,151,2,0.15); border-radius: 12px; display: flex; align-items: center; justify-content: center;">
+                            <i class="fa-solid fa-building-columns" style="font-size:18px; color:var(--naranja-rapidin);"></i>
+                        </div>
+                        <div>
+                            <div style="font-size: 14px; color: var(--azul-rapidin);">Transferencia Bancaria</div>
+                            <div style="font-size: 11px; color: var(--gris-texto); font-weight: 400;">Alias oficial UNM Buffet</div>
+                        </div>
+                    </div>
+                    <div class="pay-option" onclick="confirmarCompra()">
+                        <div style="width: 40px; height: 40px; background: rgba(253,151,2,0.15); border-radius: 12px; display: flex; align-items: center; justify-content: center;">
+                            <i class="fa-solid fa-money-bill-wave" style="font-size:18px; color:var(--naranja-rapidin);"></i>
+                        </div>
+                        <div>
+                            <div style="font-size: 14px; color: var(--azul-rapidin);">Efectivo en Ventanilla</div>
+                            <div style="font-size: 11px; color: var(--gris-texto); font-weight: 400;">Pago rápido en mostrador</div>
+                        </div>
+                    </div>
+                `;
+            }
+        }
+
+        function confirmarCompra() {
+            ordenesNuevas++;
+            const badge = document.getElementById('notif-badge');
+            badge.style.display = 'flex';
+            badge.innerText = ordenesNuevas;
+
+            mostrarCliente(2);
+        }
+
+        function abrirModal() { document.getElementById('modal-comprobante').style.display = 'flex'; }
+        function cerrarModal() { document.getElementById('modal-comprobante').style.display = 'none'; }
+
+        // --- VISTA BUFFET ---
+        function mostrarBuffet(seccion) {
+            tabBuffetActiva = seccion;
+            const container = document.getElementById('app-screen');
+            const nav = document.getElementById('nav-bar');
+
+            nav.innerHTML = `
+                <button class="nav-icon ${seccion==='pedidos'?'active':''}" onclick="mostrarBuffet('pedidos')"><i class="fa-solid fa-list-check"></i> Órdenes</button>
+                <button class="nav-icon ${seccion==='stock'?'active':''}" onclick="mostrarBuffet('stock')"><i class="fa-solid fa-boxes-stacked"></i> Stock</button>
+            `;
+
+            if(seccion === 'pedidos') {
+                container.innerHTML = `
+                    <div class="buffet-header">Gestión de Take Away</div>
+                    ${pedidosBuffet.map((ord, idx) => `
+                        <div class="order-card">
+                            <div style="display:flex; justify-content:space-between; font-weight:700; font-size:15px;">
+                                <span style="color:var(--azul-rapidin);">Orden #${ord.id}</span>                                 <span style="color:#d97706;">$${ord.total.toLocaleString()}</span>
+                            </div>
+                            <p style="font-size:13px; color:#4b5563;">${ord.detalle}</p>
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 4px;">
+                                <span style="font-size:11px; color:var(--gris-texto);">Estado: <b style="color:var(--azul-rapidin);">${ord.estado}</b></span>
+                                <button class="btn-action-buffet" onclick="cambiarEstado(${idx})">Avanzar ➔</button>
+                            </div>
+                        </div>
+                    `).join('')}
+                `;
+            } else {
+                container.innerHTML = `
+                    <div class="buffet-header">Control de Stock Diario</div>
+                    ${stockBuffet.map((item, idx) => `
+                        <div class="stock-control-card">
+                            <div>
+                                <h4 style="font-size:13px; font-weight:700; color:var(--azul-rapidin);">${item.nombre}</h4>
+                                <p style="font-size:11px; color:var(--gris-texto);">Disponibles: <b>${item.stock} u.</b></p>
+                            </div>
+                            <div style="display:flex; gap:8px;">
+                                <button onclick="modificarStock(${idx}, -1)" style="background:#f3f4f6; border:1px solid #d1d5db; width:30px; height:30px; border-radius:10px; font-weight:bold; cursor:pointer;">-</button>
+                                <button onclick="modificarStock(${idx}, 1)" style="background:#f3f4f6; border:1px solid #d1d5db; width:30px; height:30px; border-radius:10px; font-weight:bold; cursor:pointer;">+</button>
+                            </div>
+                        </div>
+                    `).join('')}
+                `;
+            }
+        }
+
+        function cambiarEstado(index) {
+            let estados = ["Recibido", "En preparación", "Listo para retirar", "Entregado"];
+            let actualIdx = estados.indexOf(pedidosBuffet[index].estado);
+            if(actualIdx < estados.length - 1) {
+                pedidosBuffet[index].estado = estados[actualIdx + 1];
+            } else {
+                pedidosBuffet[index].estado = "Entregado";
+            }
+            mostrarBuffet('pedidos');
+        }
+
+        function modificarStock(index, delta) {
+            stockBuffet[index].stock = Math.max(0, stockBuffet[index].stock + delta);
+            mostrarBuffet('stock');
+        }
+
+        cambiarModo('cliente');
+    </script>
+</body>
+</html>
