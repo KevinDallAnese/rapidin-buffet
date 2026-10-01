@@ -130,6 +130,11 @@ function mostrarCliente(id) {
             return;
         }
 
+        // Estilos dinámicos según el estado del pedido
+        let esListo = pedidoActual.estado === "Listo para retirar" || pedidoActual.estado === "Entregado";
+        let colorEstadoBg = esListo ? "#d1fae5" : "#fef3c7";
+        let colorEstadoTxt = esListo ? "#065f46" : "#b45309";
+
         container.innerHTML = `
             <div style="font-weight: 700; color: var(--azul-rapidin); margin-top: 5px; display:flex; justify-content:space-between; align-items:center;">
                 <span style="font-size: 15px;">Tu Ticket Activo</span>
@@ -138,7 +143,7 @@ function mostrarCliente(id) {
             <div class="ticket-box">
                 <p style="font-size:14px; font-weight:700; color: var(--azul-rapidin);">${pedidoActual.detalleText}</p>
                 <p style="font-size:12px; color:var(--gris-texto); margin-top:8px;">Estado del pedido:</p>
-                <div style="background: #fef3c7; color: #b45309; padding: 6px 12px; border-radius: 8px; font-size: 12px; font-weight: 700; display: inline-block; margin-top: 4px;">${pedidoActual.estado}</div>
+                <div style="background: ${colorEstadoBg}; color: ${colorEstadoTxt}; padding: 6px 12px; border-radius: 8px; font-size: 12px; font-weight: 700; display: inline-block; margin-top: 4px;">${pedidoActual.estado}</div>
             </div>
             <div class="badge-codigo">CODIGO DE RETIRO RÁPIDO</div>
             <div class="codigo-grande">${pedidoActual.idNro}</div>
@@ -220,7 +225,7 @@ function procesarPagoYGenerarCodigo() {
 
     pedidoActual = {
         idNro: nroAleatorio,
-        estado: "En preparación en cocina",
+        estado: "En preparación",
         detalleText: detalleStr,
         total: totalCarrito()
     };
@@ -293,12 +298,20 @@ function mostrarBuffet(seccion) {
 
 function cambiarEstado(index) {
     let estados = ["Recibido", "En preparación", "Listo para retirar", "Entregado"];
-    let actualIdx = estados.indexOf(pedidosBuffet[index].estado);
+    let ordenActual = pedidosBuffet[index];
+    let actualIdx = estados.indexOf(ordenActual.estado);
+
     if(actualIdx < estados.length - 1) {
-        pedidosBuffet[index].estado = estados[actualIdx + 1];
+        ordenActual.estado = estados[actualIdx + 1];
     } else {
-        pedidosBuffet[index].estado = "Entregado";
+        ordenActual.estado = "Entregado";
     }
+
+    // Si la orden cambiada es la del alumno actual, sincronizamos su estado al instante
+    if(pedidoActual.idNro === ordenActual.id) {
+        pedidoActual.estado = ordenActual.estado;
+    }
+
     mostrarBuffet('pedidos');
 }
 
