@@ -43,14 +43,19 @@ function cambiarModo(modo) {
 
 function agregarAlCarrito(index) {
     menuCliente[index].qty++;
-    mostrarCliente(tabClienteActiva);
+    actualizarVistaActual();
 }
 
 function quitarDelCarrito(index) {
     if(menuCliente[index].qty > 0) {
         menuCliente[index].qty--;
-        mostrarCliente(tabClienteActiva);
+        actualizarVistaActual();
     }
+}
+
+function actualizarVistaActual() {
+    if (tabClienteActiva === 1) renderizarMenuPrincipal();
+    else mostrarCliente(tabClienteActiva);
 }
 
 function totalCarrito() {
@@ -59,6 +64,41 @@ function totalCarrito() {
 
 function cantCarrito() {
     return menuCliente.reduce((acc, item) => acc + item.qty, 0);
+}
+
+function renderizarMenuPrincipal() {
+    document.getElementById('qty-plato-0').innerText = menuCliente[0].qty;
+    
+    let listaHtml = document.getElementById('lista-menu-html');
+    if (listaHtml) {
+        listaHtml.innerHTML = menuCliente.slice(1).map((item, idx) => `
+            <div style="background: #fff; padding: 10px 14px; border-radius: 14px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 5px rgba(0,0,0,0.03);">
+                <div>
+                    <div style="font-size: 13px; font-weight: 700; color: var(--azul-rapidin);">${item.nombre}</div>
+                    <div style="font-size: 11px; color: var(--gris-texto);">$${item.precio.toLocaleString()}</div>
+                </div>
+                <div style="display: flex; align-items: center; gap: 8px;">
+                    <button onclick="quitarDelCarrito(${idx + 1})" style="background: #e5e7eb; border: none; width: 26px; height: 26px; border-radius: 8px; font-weight: bold; cursor: pointer;">-</button>
+                    <span style="font-size: 13px; font-weight: 700; min-width: 12px; text-align: center;">${item.qty}</span>
+                    <button onclick="agregarAlCarrito(${idx + 1})" style="background: var(--naranja-rapidin); border: none; width: 26px; height: 26px; border-radius: 8px; font-weight: bold; cursor: pointer; color: var(--azul-rapidin);">+</button>
+                </div>
+            </div>
+        `).join('');
+    }
+
+    let contenedorBoton = document.getElementById('contenedor-boton-ver-pedido');
+    if (contenedorBoton) {
+        if (cantCarrito() > 0) {
+            contenedorBoton.innerHTML = `
+                <div onclick="mostrarCliente(3)" style="background: var(--azul-rapidin); color: #fff; padding: 12px 18px; border-radius: 16px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; font-weight: 700; font-size: 13px; margin-top: auto; box-shadow: 0 4px 12px rgba(11,41,57,0.2);">
+                    <span>Ver Pedido (${cantCarrito()} ítems)</span>
+                    <span>$${totalCarrito().toLocaleString()} ➔</span>
+                </div>
+            `;
+        } else {
+            contenedorBoton.innerHTML = '';
+        }
+    }
 }
 
 // --- VISTA CLIENTE ---
@@ -89,34 +129,18 @@ function mostrarCliente(id) {
                 </div>
                 <div style="display: flex; align-items: center; gap: 6px;">
                     <button onclick="quitarDelCarrito(0)" style="background: rgba(0,0,0,0.3); border: none; width: 28px; height: 28px; border-radius: 8px; font-weight: bold; color: #fff; cursor: pointer;">-</button>
-                    <span style="color: #fff; font-weight: bold; font-size: 14px;">${menuCliente[0].qty}</span>
+                    <span id="qty-plato-0" style="color: #fff; font-weight: bold; font-size: 14px;">0</span>
                     <button onclick="agregarAlCarrito(0)" style="background: var(--naranja-rapidin); border: none; width: 28px; height: 28px; border-radius: 8px; font-weight: bold; color: var(--azul-rapidin); cursor: pointer;">+</button>
                 </div>
             </div>
 
             <div style="font-weight: 700; font-size:14px; color: var(--azul-rapidin); margin-top:2px;">Menú Rápido:</div>
             
-            <div style="display: flex; flex-direction: column; gap: 8px;">
-                ${menuCliente.slice(1).map((item, idx) => `
-                    <div style="background: #fff; padding: 10px 14px; border-radius: 14px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 5px rgba(0,0,0,0.03);">
-                        <div>
-                            <div style="font-size: 13px; font-weight: 700; color: var(--azul-rapidin);">${item.nombre}</div>                             <div style="font-size: 11px; color: var(--gris-texto);">$${item.precio.toLocaleString()}</div>
-                        </div>
-                        <div style="display: flex; align-items: center; gap: 8px;">
-                            <button onclick="quitarDelCarrito(${idx + 1})" style="background: #e5e7eb; border: none; width: 26px; height: 26px; border-radius: 8px; font-weight: bold; cursor: pointer;">-</button>
-                            <span style="font-size: 13px; font-weight: 700; min-width: 12px; text-align: center;">${item.qty}</span>
-                            <button onclick="agregarAlCarrito(${idx + 1})" style="background: var(--naranja-rapidin); border: none; width: 26px; height: 26px; border-radius: 8px; font-weight: bold; cursor: pointer; color: var(--azul-rapidin);">+</button>
-                        </div>
-                    </div>
-                `).join('')}
-            </div>
+            <div style="display: flex; flex-direction: column; gap: 8px;" id="lista-menu-html"></div>
 
-            ${cantCarrito() > 0 ? `
-                <div onclick="mostrarCliente(3)" style="background: var(--azul-rapidin); color: #fff; padding: 12px 18px; border-radius: 16px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; font-weight: 700; font-size: 13px; margin-top: auto; box-shadow: 0 4px 12px rgba(11,41,57,0.2);">
-                    <span>Ver Pedido (${cantCarrito()} ítems)</span>                     <span>$${totalCarrito().toLocaleString()} ➔</span>
-                </div>
-            ` : ''}
+            <div id="contenedor-boton-ver-pedido"></div>
         `;
+        renderizarMenuPrincipal();
     } else if(id === 2) {
         if(!pedidoActual.idNro) {
             container.innerHTML = `
@@ -130,7 +154,6 @@ function mostrarCliente(id) {
             return;
         }
 
-        // Estilos dinámicos según el estado del pedido
         let esListo = pedidoActual.estado === "Listo para retirar" || pedidoActual.estado === "Entregado";
         let colorEstadoBg = esListo ? "#d1fae5" : "#fef3c7";
         let colorEstadoTxt = esListo ? "#065f46" : "#b45309";
@@ -307,7 +330,6 @@ function cambiarEstado(index) {
         ordenActual.estado = "Entregado";
     }
 
-    // Si la orden cambiada es la del alumno actual, sincronizamos su estado al instante
     if(pedidoActual.idNro === ordenActual.id) {
         pedidoActual.estado = ordenActual.estado;
     }
@@ -320,4 +342,4 @@ function modificarStock(index, delta) {
     mostrarBuffet('stock');
 }
 
-cambiarModo('cliente');
+mostrarCliente(1);
