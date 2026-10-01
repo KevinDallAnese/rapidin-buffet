@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Rapidin - Flujo de Carrito y Pago</title>
+    <title>Rapidin - Generación de Código Post-Pago</title>
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
@@ -189,7 +189,6 @@
                     <div class="codigo-grande">${pedidoActual.idNro}</div>
                 `;
             } else if(id === 3) {
-                // Pantalla de Resumen y Pago con carrito completamente editable
                 let itemsEnCarrito = menuCliente.filter(i => i.qty > 0);
                 
                 container.innerHTML = `
@@ -223,19 +222,19 @@
                     ${itemsEnCarrito.length > 0 ? `
                         <div style="font-weight: 700; color: var(--azul-rapidin); font-size: 14px; margin-top: 2px;">Seleccioná medio de pago:</div>
                         
-                        <div class="pay-option" onclick="confirmarCompra()">
+                        <div class="pay-option" onclick="procesarPagoYGenerarCodigo()">
                             <div style="width: 32px; height: 32px; background: rgba(253,151,2,0.15); border-radius: 10px; display: flex; align-items: center; justify-content: center;">
                                 <i class="fa-solid fa-mobile-screen-button" style="font-size:14px; color:var(--naranja-rapidin);"></i>
                             </div>
                             <div style="font-size: 13px;">Mercado Pago (QR)</div>
                         </div>
-                        <div class="pay-option" onclick="confirmarCompra()">
+                        <div class="pay-option" onclick="procesarPagoYGenerarCodigo()">
                             <div style="width: 32px; height: 32px; background: rgba(253,151,2,0.15); border-radius: 10px; display: flex; align-items: center; justify-content: center;">
                                 <i class="fa-solid fa-building-columns" style="font-size:14px; color:var(--naranja-rapidin);"></i>
                             </div>
                             <div style="font-size: 13px;">Transferencia Bancaria (Alias UNM)</div>
                         </div>
-                        <div class="pay-option" onclick="confirmarCompra()">
+                        <div class="pay-option" onclick="procesarPagoYGenerarCodigo()">
                             <div style="width: 32px; height: 32px; background: rgba(253,151,2,0.15); border-radius: 10px; display: flex; align-items: center; justify-content: center;">
                                 <i class="fa-solid fa-money-bill-wave" style="font-size:14px; color:var(--naranja-rapidin);"></i>
                             </div>
@@ -246,15 +245,16 @@
             }
         }
 
-        function confirmarCompra() {
+        // Función que se ejecuta SOLO al hacer clic en un medio de pago
+        function procesarPagoYGenerarCodigo() {
             if(cantCarrito() === 0) {
                 alert("Por favor, sumá al menos un producto al pedido.");
                 return;
             }
 
-            // Generar número de pedido aleatorio de 4 cifras (ej: 4821)
+            // Generar número de pedido aleatorio de 4 cifras recién ahora
             let nroAleatorio = Math.floor(1000 + Math.random() * 9000);
-            let detalleStr = menuCliente.filter(i => i.qty > 0).map(i => `${i.qty}x ${i.nombre}`).arge ? ... : menuCliente.filter(i => i.qty > 0).map(i => `${i.qty}x ${i.nombre}`).join(', ');
+            let detalleStr = menuCliente.filter(i => i.qty > 0).map(i => `${i.qty}x ${i.nombre}`).join(', ');
 
             // Guardar en el estado del pedido actual
             pedidoActual = {
@@ -284,7 +284,7 @@
             // Vaciar el carrito de selección actual
             menuCliente.forEach(i => i.qty = 0);
 
-            // Redirigir al usuario a su ticket activo
+            // Redirigir al usuario a su ticket activo con el código generado
             mostrarCliente(2);
         }
 
