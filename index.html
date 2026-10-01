@@ -9,11 +9,13 @@
 </head>
 <body>
 
-    <!-- LOADER DE INICIO (Splash Screen) -->
+    <!-- LOADER DE INICIO (Spinner radial minimalista) -->
     <div id="app-loader" style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: #0b2939; z-index: 9999; display: flex; flex-direction: column; justify-content: center; align-items: center; transition: opacity 0.5s ease;">
-        <h1 style="font-family: 'Rhodesia'; color: var(--naranja-rapidin); font-size: 42px; letter-spacing: 2px; margin-bottom: 10px;">Rapidin</h1>
-        <p style="color: #f4ecde; font-size: 13px; font-weight: 500; opacity: 0.8;">Buffet Universitario UNM</p>
-        <div style="width: 35px; height: 35px; border: 3px solid rgba(253,151,2,0.2); border-top-color: var(--naranja-rapidin); border-radius: 50%; animation: spin 0.8s linear infinite; margin-top: 25px;"></div>
+        <h1 style="font-family: 'Rhodesia'; color: var(--naranja-rapidin); font-size: 52px; letter-spacing: 2px; margin-bottom: 4px;">Rapidin</h1>
+        <p style="color: #f4ecde; font-size: 13px; font-weight: 500; opacity: 0.8; margin-bottom: 24px;">Buffet Universitario UNM</p>
+        
+        <!-- Anillo minimalista giratorio -->
+        <div class="minimal-spinner"></div>
     </div>
 
     <!-- Selector de vistas superior -->
@@ -42,7 +44,7 @@
                     <h2>PLATO<br>DEL DÍA</h2>
                     <p style="font-size:12px; opacity:0.9; margin-top: 4px;">guiso de lentejas • $12.000</p>
                 </div>
-                <div style="display: flex; align-items: center; gap: 6px;">
+                <div style="display: flex; align-items: center; gap: 6px;" id="contenedor-plato-dia-btn">
                     <button onclick="quitarDelCarrito(0)" style="background: rgba(0,0,0,0.3); border: none; width: 28px; height: 28px; border-radius: 8px; font-weight: bold; color: #fff; cursor: pointer;">-</button>
                     <span id="qty-plato-0" style="color: #fff; font-weight: bold; font-size: 14px;">0</span>
                     <button onclick="agregarAlCarrito(0)" style="background: var(--naranja-rapidin); border: none; width: 28px; height: 28px; border-radius: 8px; font-weight: bold; color: var(--azul-rapidin); cursor: pointer;">+</button>
