@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Rapidin - Prototipo con Carrito Interactivo</title>
+    <title>Rapidin - Prototipo Corregido</title>
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
@@ -45,13 +45,12 @@
         let modoActual = 'cliente';
         let ordenesNuevas = 0;
         
-        // Menú completo disponible para el cliente
         let menuCliente = [
             { id: 1, nombre: "Guiso de Lentejas (Plato del día)", precio: 12000, qty: 0 },
             { id: 2, nombre: "Sánguche de Milanesa", precio: 10000, qty: 0 },
             { id: 3, nombre: "Fideos con salsa", precio: 8500, qty: 0 },
             { id: 4, nombre: "Café con Medialunas", precio: 4500, qty: 0 },
-            { id: 5, nombre: "Agua Saborizada 500ml", stock: 30, precio: 2000, qty: 0 }
+            { id: 5, nombre: "Agua Saborizada 500ml", precio: 2000, qty: 0 }
         ];
 
         let stockBuffet = [
@@ -81,7 +80,7 @@
 
         function agregarAlCarrito(index) {
             menuCliente[index].qty++;
-            mostrarCliente(1); // Actualiza la vista principal para que se note el carrito
+            mostrarCliente(1);
         }
 
         function quitarDelCarrito(index) {
@@ -117,7 +116,7 @@
                         <span style="font-size: 11px; background: #e5e7eb; padding: 4px 10px; border-radius: 20px; font-weight: 600;">UNM Moreno</span>
                     </div>
 
-                    <!-- Plato del Día con botón directo para sumar -->
+                    <!-- Plato del Día -->
                     <div class="plato-banner">
                         <div>
                             <span style="font-size: 10px; text-transform: uppercase; color: var(--naranja-rapidin); font-weight:800;">Plato del día</span>
@@ -206,7 +205,6 @@
             badge.style.display = 'flex';
             badge.innerText = ordenesNuevas;
 
-            // Registrar en el panel del buffet
             let detalleStr = menuCliente.filter(i => i.qty > 0).map(i => `${i.qty}x ${i.nombre}`).join(', ');
             pedidosBuffet.unshift({ id: 4444, detalle: detalleStr, total: totalCarrito(), estado: "En preparación" });
 
