@@ -33,7 +33,17 @@ body {
     margin: 0;
 }
 
-@keyframes spin {
+/* Spinner radial minimalista */
+.minimal-spinner {
+    width: 28px;
+    height: 28px;
+    border: 2px solid rgba(253, 151, 2, 0.25);
+    border-top-color: var(--naranja-rapidin);
+    border-radius: 50%;
+    animation: spinMinimal 0.7s linear infinite;
+}
+
+@keyframes spinMinimal {
     to { transform: rotate(360deg); }
 }
 
