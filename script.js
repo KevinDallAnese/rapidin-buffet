@@ -147,9 +147,18 @@ function mostrarCliente(id) {
     const nav = document.getElementById('nav-bar');
     
     nav.innerHTML = `
-        <button class="nav-icon ${id===1?'active':''}" onclick="mostrarCliente(1)"><i class="fa-solid fa-house"></i></button>
-        <button class="nav-icon ${id===2?'active':''}" onclick="mostrarCliente(2)"><i class="fa-solid fa-ticket"></i></button>
-        <button class="nav-icon ${id===3?'active':''}" onclick="mostrarCliente(3)"><i class="fa-solid fa-wallet"></i></button>
+        <button class="nav-icon ${id===1?'active':''}" onclick="mostrarCliente(1)">
+            <svg viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+            Menú
+        </button>
+        <button class="nav-icon ${id===2?'active':''}" onclick="mostrarCliente(2)">
+            <svg viewBox="0 0 24 24"><path d="M21 5c-1.11 0-2 .89-2 2v2H5V7c0-1.11-.89-2-2-2s-2 .89-2 2v12c0 1.1.9 2 2 2h18c1.1 0 2-.9 2-2V7c0-1.11-.9-2-2-2m0 14H3V9h18z"/></svg>
+            Ticket
+        </button>
+        <button class="nav-icon ${id===3?'active':''}" onclick="mostrarCliente(3)">
+            <svg viewBox="0 0 24 24"><path d="M21 18v1c0 1.1-.9 2-2 2H5c-1.11 0-2-.9-2-2V5c0-1.1.89-2 2-2h14c1.1 0 2 .9 2 2v1h-9c-1.11 0-2 .9-2 2v8c0 1.1.89 2 2 2zm-9-2h10V8H12zm4-2.5c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5z"/></svg>
+            Pago
+        </button>
     `;
 
     if(id === 1) {
@@ -182,7 +191,7 @@ function mostrarCliente(id) {
         if(!pedidoActual.idNro) {
             container.innerHTML = `
                 <div style="text-align: center; margin-top: 100px; color: var(--azul-rapidin);">
-                    <i class="fa-solid fa-receipt" style="font-size: 48px; color: var(--naranja-rapidin); margin-bottom: 15px;"></i>
+                    <svg style="width:48px; height:48px; fill:var(--naranja-rapidin); margin-bottom:15px;" viewBox="0 0 24 24"><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8zm2 16H8v-2h8zm0-4H8v-2h8zm-3-5V3.5L18.5 9z"/></svg>
                     <h3 style="font-family: 'Rhodesia'; font-size: 20px;">No tenés ningún ticket activo</h3>
                     <p style="font-size: 13px; color: var(--gris-texto); margin: 10px 0 20px 0;">Armá tu pedido en el menú y abonalo para generar tu código QR de retiro.</p>
                     <button onclick="mostrarCliente(1)" style="background: var(--naranja-rapidin); border: none; padding: 10px 20px; border-radius: 14px; font-weight: 700; cursor: pointer; color: var(--azul-rapidin);">Ir al Menú</button>
@@ -199,7 +208,7 @@ function mostrarCliente(id) {
         container.innerHTML = `
             <div style="font-weight: 700; color: var(--azul-rapidin); margin-top: 5px; display:flex; justify-content:space-between; align-items:center;">
                 <span style="font-size: 15px;">Tu Ticket Activo</span>
-                ${!esEntregado ? `<button onclick="abrirModal()" style="background:var(--azul-rapidin); color:#fff; border:none; padding:6px 12px; border-radius:10px; font-size:11px; font-weight:600; cursor:pointer;"><i class="fa-solid fa-qrcode"></i> Ver QR</button>` : ''}
+                ${!esEntregado ? `<button onclick="abrirModal()" style="background:var(--azul-rapidin); color:#fff; border:none; padding:6px 12px; border-radius:10px; font-size:11px; font-weight:600; cursor:pointer;">Ver QR</button>` : ''}
             </div>
             <div class="ticket-box">
                 <p style="font-size:14px; font-weight:700; color: var(--azul-rapidin);">${pedidoActual.detalleText}</p>
@@ -253,19 +262,19 @@ function mostrarCliente(id) {
                 
                 <div class="pay-option" onclick="procesarPagoYGenerarCodigo()">
                     <div style="width: 32px; height: 32px; background: rgba(253,151,2,0.15); border-radius: 10px; display: flex; align-items: center; justify-content: center;">
-                        <i class="fa-solid fa-mobile-screen-button" style="font-size:14px; color:var(--naranja-rapidin);"></i>
+                        <svg style="width:16px; height:16px; fill:var(--naranja-rapidin);" viewBox="0 0 24 24"><path d="M17 1.01L7 1c-1.1 0-2 .9-2 2v18c0 1.1.9 2 2 2h10c1.1 0 2-.9 2-2V3c0-1.1-.9-1.99-2-1.99zM17 19H7V5h10v14z"/></svg>
                     </div>
                     <div style="font-size: 13px;">Mercado Pago (QR)</div>
                 </div>
                 <div class="pay-option" onclick="procesarPagoYGenerarCodigo()">
                     <div style="width: 32px; height: 32px; background: rgba(253,151,2,0.15); border-radius: 10px; display: flex; align-items: center; justify-content: center;">
-                        <i class="fa-solid fa-building-columns" style="font-size:14px; color:var(--naranja-rapidin);"></i>
+                        <svg style="width:16px; height:16px; fill:var(--naranja-rapidin);" viewBox="0 0 24 24"><path d="M4 10h3v7H4zM10.5 10h3v7h-3zM2 19h20v3H2zM17 10h3v7h-3zM12 1L1 6v2h22V6z"/></svg>
                     </div>
                     <div style="font-size: 13px;">Transferencia Bancaria (Alias UNM)</div>
                 </div>
                 <div class="pay-option" onclick="procesarPagoYGenerarCodigo()">
                     <div style="width: 32px; height: 32px; background: rgba(253,151,2,0.15); border-radius: 10px; display: flex; align-items: center; justify-content: center;">
-                        <i class="fa-solid fa-money-bill-wave" style="font-size:14px; color:var(--naranja-rapidin);"></i>
+                        <svg style="width:16px; height:16px; fill:var(--naranja-rapidin);" viewBox="0 0 24 24"><path d="M21 18v1c0 1.1-.9 2-2 2H5c-1.11 0-2-.9-2-2V5c0-1.1.89-2 2-2h14c1.1 0 2 .9 2 2v1h-9c-1.11 0-2 .9-2 2v8c0 1.1.89 2 2 2zm-9-2h10V8H12zm4-2.5c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5z"/></svg>
                     </div>
                     <div style="font-size: 13px;">Efectivo en Ventanilla Flash</div>
                 </div>
@@ -344,9 +353,18 @@ function mostrarBuffet(seccion) {
     const nav = document.getElementById('nav-bar');
 
     nav.innerHTML = `
-        <button class="nav-icon ${seccion==='pedidos'?'active':''}" onclick="mostrarBuffet('pedidos')"><i class="fa-solid fa-list-check"></i> Órdenes</button>
-        <button class="nav-icon ${seccion==='historial'?'active':''}" onclick="mostrarBuffet('historial')"><i class="fa-solid fa-clock-rotate-left"></i> Historial</button>
-        <button class="nav-icon ${seccion==='stock'?'active':''}" onclick="mostrarBuffet('stock')"><i class="fa-solid fa-boxes-stacked"></i> Stock</button>
+        <button class="nav-icon ${seccion==='pedidos'?'active':''}" onclick="mostrarBuffet('pedidos')">
+            <svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2m-5 14H7v-2h7zm3-4H7v-2h10zm0-4H7V7h10z"/></svg>
+            Órdenes
+        </button>
+        <button class="nav-icon ${seccion==='historial'?'active':''}" onclick="mostrarBuffet('historial')">
+            <svg viewBox="0 0 24 24"><path d="M13 3c-4.97 0-9 4.03-9 9H1l3.89 3.89.07.14L9 12H6c0-3.87 3.13-7 7-7s7 3.13 7 7-3.13 7-7 7c-1.93 0-3.68-.79-4.94-2.06l-1.42 1.42C8.27 19.99 10.51 21 13 21c4.97 0 9-4.03 9-9s-4.03-9-9-9zm-1 5v5l4.28 2.54.72-1.21-3.5-2.08V8H12z"/></svg>
+            Historial
+        </button>
+        <button class="nav-icon ${seccion==='stock'?'active':''}" onclick="mostrarBuffet('stock')">
+            <svg viewBox="0 0 24 24"><path d="M20 13H4c-.55 0-1 .45-1 1v6c0 .55.45 1 1 1h16c.55 0 1-.45 1-1v-6c0-.55-.45-1-1-1m0-10H4c-.55 0-1 .45-1 1v6c0 .55.45 1 1 1h16c.55 0 1-.45 1-1V4c0-.55-.45-1-1-1M11 7H6V5h5zm0 10H6v-2h5zm7-4h-5v-2h5zm0-10h-5V5h5z"/></svg>
+            Stock
+        </button>
     `;
 
     if(seccion === 'pedidos') {
