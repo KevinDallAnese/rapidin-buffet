@@ -33,6 +33,10 @@ body {
     margin: 0;
 }
 
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
 .mode-selector {
     margin-bottom: 20px;
     display: flex;
