@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rapidin - Buffet UNM</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+
+    <!-- LOADER DE INICIO (Spinner radial minimalista) -->
+    <div id="app-loader" style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: #0b2939; z-index: 9999; display: flex; flex-direction: column; justify-content: center; align-items: center; transition: opacity 0.5s ease;">
+        <h1 style="font-family: 'Rhodesia'; color: var(--naranja-rapidin); font-size: 52px; letter-spacing: 2px; margin-bottom: 4px;">Rapidin</h1>
+        <p style="color: #f4ecde; font-size: 13px; font-weight: 500; opacity: 0.8; margin-bottom: 24px;">Buffet Universitario UNM</p>
+        
+        <!-- Anillo minimalista giratorio -->
+        <div class="minimal-spinner"></div>
+    </div>
+
+    <!-- Selector de vistas superior -->
+    <div class="mode-selector">
+        <button id="btn-cliente" class="mode-btn active" onclick="cambiarModo('cliente')">Vista Alumno</button>
+        <button id="btn-buffet" class="mode-btn" onclick="cambiarModo('buffet')">
+            Vista Buffet
+            <span id="notif-badge" class="notification-badge" style="display: none;">1</span>
+        </button>
+    </div>
+
+    <div class="phone-frame">
+        <div class="phone-header-notch"></div>
+
+        <!-- CONTENIDO DINÁMICO -->
+        <div id="app-screen" class="screen-content">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 5px;">
+                <span style="font-weight: 800; font-size: 20px; font-family: 'Rhodesia'; color: var(--azul-rapidin);">Rapidin</span>
+                <span style="font-size: 11px; background: #e5e7eb; padding: 4px 10px; border-radius: 20px; font-weight: 600;">UNM Moreno</span>
+            </div>
+
+            <!-- Plato del Día -->
+            <div class="plato-banner">
+                <div>
+                    <span style="font-size: 10px; text-transform: uppercase; color: var(--naranja-rapidin); font-weight:800;">Plato del día</span>
+                    <h2>PLATO<br>DEL DÍA</h2>
+                    <p style="font-size:12px; opacity:0.9; margin-top: 4px;">guiso de lentejas • $12.000</p>
+                </div>
+                <div style="display: flex; align-items: center; gap: 6px;" id="contenedor-plato-dia-btn">
+                    <button onclick="quitarDelCarrito(0)" style="background: rgba(0,0,0,0.3); border: none; width: 28px; height: 28px; border-radius: 8px; font-weight: bold; color: #fff; cursor: pointer;">-</button>
+                    <span id="qty-plato-0" style="color: #fff; font-weight: bold; font-size: 14px;">0</span>
+                    <button onclick="agregarAlCarrito(0)" style="background: var(--naranja-rapidin); border: none; width: 28px; height: 28px; border-radius: 8px; font-weight: bold; color: var(--azul-rapidin); cursor: pointer;">+</button>
+                </div>
+            </div>
+
+            <div style="font-weight: 700; font-size:14px; color: var(--azul-rapidin); margin-top:2px;">Menú Rápido:</div>
+            <div style="display: flex; flex-direction: column; gap: 8px;" id="lista-menu-html"></div>
+            <div id="contenedor-boton-ver-pedido"></div>
+        </div>
+
+        <!-- MODAL COMPROBANTE QR -->
+        <div id="modal-comprobante" class="modal-overlay" style="display: none;">
+            <div class="modal-content">
+                <div style="background: var(--fondo-app); width: 70px; height: 70px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 12px auto;">
+                    <i class="fa-solid fa-qrcode" style="font-size: 32px; color: var(--azul-rapidin);"></i>
+                </div>
+                <h3 style="font-family:'Rhodesia'; color:var(--azul-rapidin); font-size:24px;">Comprobante Digital</h3>
+                <p style="font-size:13px; color:var(--gris-texto); margin: 6px 0 16px 0;">Orden <b id="modal-nro-orden">#----</b> • Comida Take Away</p>
+                <div style="background:var(--fondo-app); padding:12px; border-radius:14px; font-size:12px; margin-bottom: 20px; color: var(--azul-rapidin); font-weight: 500;">Presentá este código QR en la ventanilla rápida del buffet universitario.</div>
+                <button onclick="cerrarModal()" style="background:var(--naranja-rapidin); border:none; padding:10px 24px; border-radius:14px; font-weight:700; cursor:pointer; color:var(--azul-rapidin); width: 100%;">Entendido</button>
+            </div>
+        </div>
+
+        <!-- NAVEGACIÓN INFERIOR -->
+        <nav class="bottom-nav" id="nav-bar"></nav>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
