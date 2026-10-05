@@ -2,9 +2,8 @@
 
 @font-face {
     font-family: 'Rhodesia';
-    src: url('https://fonts.gstatic.com/s/dmserifdisplay/v15/co3bmX5slCNuHLi8bLeY9MK7whWMhyjYpXo.woff2') format('woff2');
+    src: local('DM Serif Display'), url('https://fonts.gstatic.com/s/dmserifdisplay/v15/co3bmX5slCNuHLi8bLeY9MK7whWMhyjYpXo.woff2') format('woff2');
 }
-
 
 :root {
     --naranja-rapidin: #fd9702;
