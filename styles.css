@@ -1,6 +1,8 @@
 @font-face {
     font-family: 'Rhodesia';
     src: url('https://fonts.gstatic.com/s/dmserifdisplay/v15/co3bmX5slCNuHLi8bLeY9MK7whWMhyjYpXo.woff2') format('woff2');
+    font-weight: normal;
+    font-style: normal;
 }
 
 :root {
