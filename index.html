@@ -8,7 +8,7 @@
 </head>
 <body>
 
-    <!-- LOADER DE INICIO (Spinner radial minimalista) -->
+    <!-- LOADER DE INICIO -->
     <div id="app-loader" style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: #0b2939; z-index: 9999; display: flex; flex-direction: column; justify-content: center; align-items: center; transition: opacity 0.5s ease;">
         <h1 style="font-family: 'Rhodesia'; color: var(--naranja-rapidin); font-size: 52px; letter-spacing: 2px; margin-bottom: 4px;">Rapidin</h1>
         <p style="color: #f4ecde; font-size: 13px; font-weight: 500; opacity: 0.8; margin-bottom: 24px;">Buffet Universitario UNM</p>
@@ -34,21 +34,32 @@
                 <span style="font-size: 11px; background: #e5e7eb; padding: 4px 10px; border-radius: 20px; font-weight: 600;">UNM Moreno</span>
             </div>
 
-            <!-- Plato del Día -->
-            <div class="plato-banner">
-                <div>
-                    <span style="font-size: 10px; text-transform: uppercase; color: var(--naranja-rapidin); font-weight:800;">Plato del día</span>
-                    <h2>PLATO<br>DEL DÍA</h2>
-                    <p style="font-size:12px; opacity:0.9; margin-top: 4px;">guiso de lentejas • $12.000</p>
-                </div>
-                <div style="display: flex; align-items: center; gap: 6px;" id="contenedor-plato-dia-btn">
-                    <button onclick="quitarDelCarrito(0)" style="background: rgba(0,0,0,0.3); border: none; width: 28px; height: 28px; border-radius: 8px; font-weight: bold; color: #fff; cursor: pointer;">-</button>
-                    <span id="qty-plato-0" style="color: #fff; font-weight: bold; font-size: 14px;">0</span>
-                    <button onclick="agregarAlCarrito(0)" style="background: var(--naranja-rapidin); border: none; width: 28px; height: 28px; border-radius: 8px; font-weight: bold; color: var(--azul-rapidin); cursor: pointer;">+</button>
+            <!-- Menús Destacados (Arriba) -->
+            <div id="contenedor-banner-destacados"></div>
+
+            <!-- Grilla de Categorías (Abajo) con Kiosco -->
+            <div id="contenedor-categorias-html">
+                <div style="font-weight: 700; font-size: 14px; color: var(--azul-rapidin); margin-bottom: 8px;">Categorías:</div>
+                <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 14px;">
+                    <div onclick="filtrarCategoria('platos')" style="background: #fff; color: var(--azul-rapidin); padding: 14px; border-radius: 16px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.04);">
+                        <svg style="width: 26px; height: 26px; fill: var(--azul-rapidin);" viewBox="0 0 24 24"><path d="M11 9H9V2H7v7H5V2H3v7c0 2.12 1.66 3.84 3.75 3.97V22h2.5v-9.03C11.34 12.84 13 11.12 13 9V2h-2v7zm5-3v8h2.5v8H21V2c-2.76 0-5 2.24-5 4z"/></svg>
+                        <span style="font-size: 12px; font-weight: 700;">Platos</span>
+                    </div>
+                    <div onclick="filtrarCategoria('kiosco')" style="background: #fff; color: var(--azul-rapidin); padding: 14px; border-radius: 16px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.04);">
+                        <svg style="width: 26px; height: 26px; fill: var(--azul-rapidin);" viewBox="0 0 24 24"><path d="M20 4H4v2h16V4m1 10v-2l-1-5H4l-1 5v2h1v6h10v-6h4v6h2v-6h1m-9 4H6v-4h6v4z"/></svg>
+                        <span style="font-size: 12px; font-weight: 700;">Kiosco</span>
+                    </div>
+                    <div onclick="filtrarCategoria('cafeteria')" style="background: #fff; color: var(--azul-rapidin); padding: 14px; border-radius: 16px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.04);">
+                        <svg style="width: 26px; height: 26px; fill: var(--azul-rapidin);" viewBox="0 0 24 24"><path d="M2 21h18v-2H2M20 8h-2V5h2m0-2H4v10a4 4 0 0 0 4 4h6a4 4 0 0 0 4-4v-3h2a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2z"/></svg>
+                        <span style="font-size: 12px; font-weight: 700;">Cafetería</span>
+                    </div>
+                    <div onclick="filtrarCategoria('bebidas')" style="background: #fff; color: var(--azul-rapidin); padding: 14px; border-radius: 16px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.04);">
+                        <svg style="width: 26px; height: 26px; fill: var(--azul-rapidin);" viewBox="0 0 24 24"><path d="M3 2l2.01 18.23C5.13 21.23 5.97 22 7 22h10c1.03 0 1.87-.77 1.99-1.77L21 2H3zm9 17c-1.66 0-3-1.34-3-3 0-2 3-5.4 3-5.4s3 3.4 3 5.4c0 1.66-1.34 3-3 3zm6.33-13H5.67l-.44-4h13.54l-.44 4z"/></svg>
+                        <span style="font-size: 12px; font-weight: 700;">Bebidas</span>
+                    </div>
                 </div>
             </div>
 
-            <div style="font-weight: 700; font-size:14px; color: var(--azul-rapidin); margin-top:2px;">Menú Rápido:</div>
             <div style="display: flex; flex-direction: column; gap: 8px;" id="lista-menu-html"></div>
             <div id="contenedor-boton-ver-pedido"></div>
         </div>
@@ -66,7 +77,7 @@
             </div>
         </div>
 
-        <!-- NAVEGACIÓN INFERIOR (Fija en HTML para evitar vacíos al cargar) -->
+        <!-- NAVEGACIÓN INFERIOR -->
         <nav class="bottom-nav" id="nav-bar">
             <button class="nav-icon active" onclick="mostrarCliente(1)">
                 <svg viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
