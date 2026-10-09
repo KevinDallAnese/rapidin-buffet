@@ -1,6 +1,7 @@
 let modoActual = 'cliente';
 let ordenesNuevas = 0;
 let tabClienteActiva = 1;
+let categoriaActiva = 'todos';
 
 let pedidoActual = {
     idNro: null,
@@ -9,20 +10,50 @@ let pedidoActual = {
     total: 0
 };
 
+// Menú con imágenes reales de stock (Picsum/Unsplash estables)
 let menuCliente = [
-    { id: 1, nombre: "Guiso de Lentejas", precio: 12000, qty: 0 },
-    { id: 2, nombre: "Sánguche de Milanesa", precio: 10000, qty: 0 },
-    { id: 3, nombre: "Fideos con salsa", precio: 8500, qty: 0 },
-    { id: 4, nombre: "Café con Medialunas", precio: 4500, qty: 0 },
-    { id: 5, nombre: "Agua Saborizada 500ml", precio: 2000, qty: 0 }
+    // Destacados (Platos principales del día)
+    { id: 1, categoria: "platos", tipo: "destacado-estudiantil", nombre: "Menú Estudiantil (Guiso + Pan)", precio: 9500, qty: 0, imagen: "https://images.unsplash.com/photo-1547592166-23ac45744acd?w=150&auto=format&fit=crop&q=80" },
+    { id: 2, categoria: "platos", tipo: "destacado-ejecutivo", nombre: "Menú Ejecutivo (Milanesa con Puré)", precio: 12500, qty: 0, imagen: "https://images.unsplash.com/photo-1625813506062-0aeb1d7a094b?w=150&auto=format&fit=crop&q=80" },
+    { id: 3, categoria: "platos", tipo: "destacado-especial", nombre: "Menú Especial Veggie (Wok)", precio: 11000, qty: 0, imagen: "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=150&auto=format&fit=crop&q=80" },
+    
+    // Platos Elaborados
+    { id: 4, categoria: "platos", tipo: "normal", nombre: "Porción de Pastel de Papa", precio: 10500, qty: 0, imagen: "https://images.unsplash.com/photo-1589301760014-d929f3979dbc?w=150&auto=format&fit=crop&q=80" },
+    { id: 5, categoria: "platos", tipo: "normal", nombre: "Tarta de Jamón y Queso (Porción)", precio: 7500, qty: 0, imagen: "https://images.unsplash.com/photo-1583032015867-e17231780c1d?w=150&auto=format&fit=crop&q=80" },
+    { id: 6, categoria: "platos", tipo: "normal", nombre: "Ñoquis Caseros con Salsa", precio: 9800, qty: 0, imagen: "https://images.unsplash.com/photo-1551183053-bf91a1d81141?w=150&auto=format&fit=crop&q=80" },
+    { id: 7, categoria: "platos", tipo: "normal", nombre: "Empanadas de Carne (Unidad)", precio: 1500, qty: 0, imagen: "https://images.unsplash.com/photo-1608897013039-887f21d8c804?w=150&auto=format&fit=crop&q=80" },
+
+    // Kiosco (Comidas listas para llevar / Snacks / Sándwiches)
+    { id: 8, categoria: "kiosco", tipo: "normal", nombre: "Sánguche de Milanesa Completo", precio: 10000, qty: 0, imagen: "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=150&auto=format&fit=crop&q=80" },
+    { id: 9, categoria: "kiosco", tipo: "normal", nombre: "Sánguche de Miga (Jamón y Queso)", precio: 4000, qty: 0, imagen: "https://images.unsplash.com/photo-1554433549-1db4cb53655a?w=150&auto=format&fit=crop&q=80" },
+    { id: 10, categoria: "kiosco", tipo: "normal", nombre: "Alfajor Regional Triple", precio: 2500, qty: 0, imagen: "https://images.unsplash.com/photo-1606313564200-e75d5e30476c?w=150&auto=format&fit=crop&q=80" },
+    { id: 11, categoria: "kiosco", tipo: "normal", nombre: "Turrón / Barrita de Cereal", precio: 1000, qty: 0, imagen: "https://images.unsplash.com/photo-1622484218837-3072e143cf59?w=150&auto=format&fit=crop&q=80" },
+
+    // Cafetería
+    { id: 12, categoria: "cafeteria", tipo: "normal", nombre: "Café con 2 Medialunas", precio: 4500, qty: 0, imagen: "https://images.unsplash.com/photo-1509042239860-f550ce710b93?w=150&auto=format&fit=crop&q=80" },
+    { id: 13, categoria: "cafeteria", tipo: "normal", nombre: "Té o Mate cocido con bizcochitos", precio: 3000, qty: 0, imagen: "https://images.unsplash.com/photo-1576092768241-dec231879fc3?w=150&auto=format&fit=crop&q=80" },
+
+    // Bebidas
+    { id: 14, categoria: "bebidas", tipo: "normal", nombre: "Agua Saborizada 500ml", precio: 2000, qty: 0, imagen: "https://images.unsplash.com/photo-1548839140-29a749e1cf4d?w=150&auto=format&fit=crop&q=80" },
+    { id: 15, categoria: "bebidas", tipo: "normal", nombre: "Gaseosa Línea Pepsi 500ml", precio: 2800, qty: 0, imagen: "https://images.unsplash.com/photo-1622483767028-3f66f32aef97?w=150&auto=format&fit=crop&q=80" }
 ];
 
 let stockBuffet = [
-    { nombre: "Guiso de Lentejas", stock: 15 },
-    { nombre: "Sánguche de Milanesa", stock: 24 },
-    { nombre: "Fideos con salsa", stock: 20 },
-    { nombre: "Café con Medialunas", stock: 40 },
-    { nombre: "Agua Saborizada 500ml", stock: 30 }
+    { nombre: "Menú Estudiantil (Guiso + Pan)", stock: 15 },
+    { nombre: "Menú Ejecutivo (Milanesa con Puré)", stock: 20 },
+    { nombre: "Menú Especial Veggie (Wok)", stock: 10 },
+    { nombre: "Porción de Pastel de Papa", stock: 12 },
+    { nombre: "Tarta de Jamón y Queso (Porción)", stock: 14 },
+    { nombre: "Ñoquis Caseros con Salsa", stock: 15 },
+    { nombre: "Empanadas de Carne (Unidad)", stock: 30 },
+    { nombre: "Sánguche de Milanesa Completo", stock: 24 },
+    { nombre: "Sánguche de Miga (Jamón y Queso)", stock: 20 },
+    { nombre: "Alfajor Regional Triple", stock: 35 },
+    { nombre: "Turrón / Barrita de Cereal", stock: 50 },
+    { nombre: "Café con 2 Medialunas", stock: 40 },
+    { nombre: "Té o Mate cocido con bizcochitos", stock: 35 },
+    { nombre: "Agua Saborizada 500ml", stock: 30 },
+    { nombre: "Gaseosa Línea Pepsi 500ml", stock: 25 }
 ];
 
 let pedidosBuffet = [];
@@ -41,6 +72,11 @@ function cambiarModo(modo) {
         document.getElementById('notif-badge').style.display = 'none';
         mostrarBuffet(tabBuffetActiva);
     }
+}
+
+function filtrarCategoria(cat) {
+    categoriaActiva = (categoriaActiva === cat) ? 'todos' : cat;
+    renderizarMenuPrincipal();
 }
 
 function agregarAlCarrito(index) {
@@ -77,52 +113,85 @@ function cantCarrito() {
 }
 
 function renderizarMenuPrincipal() {
-    const qtyPlato0 = document.getElementById('qty-plato-0');
-    if (qtyPlato0) qtyPlato0.innerText = menuCliente[0].qty;
+    let contenedorBannerDestacados = document.getElementById('contenedor-banner-destacados');
+    if (contenedorBannerDestacados) {
+        if (categoriaActiva === 'todos' || categoriaActiva === 'platos') {
+            contenedorBannerDestacados.style.display = 'block';
+            let destacadosFiltrados = menuCliente.filter(item => item.tipo.startsWith('destacado-'));
+            if (categoriaActiva === 'platos') {
+                destacadosFiltrados = destacadosFiltrados.filter(item => item.categoria === 'platos');
+            }
 
-    let stockPlato0 = stockBuffet.find(s => s.nombre === menuCliente[0].nombre);
-    let contenedorPlatoBtn = document.getElementById('contenedor-plato-dia-btn');
-    
-    if (stockPlato0 && stockPlato0.stock <= 0) {
-        if(contenedorPlatoBtn) {
-            contenedorPlatoBtn.innerHTML = `<span style="font-size:11px; background:#ef4444; color:#fff; padding:4px 8px; border-radius:8px; font-weight:bold;">Agotado</span>`;
-        }
-        if (menuCliente[0].qty > stockPlato0.stock) menuCliente[0].qty = stockPlato0.stock;
-    } else {
-        if(contenedorPlatoBtn && !contenedorPlatoBtn.innerHTML.includes('agregarAlCarrito')) {
-            contenedorPlatoBtn.innerHTML = `
-                <button onclick="quitarDelCarrito(0)" style="background: rgba(0,0,0,0.3); border: none; width: 28px; height: 28px; border-radius: 8px; font-weight: bold; color: #fff; cursor: pointer;">-</button>
-                <span id="qty-plato-0" style="color: #fff; font-weight: bold; font-size: 14px;">${menuCliente[0].qty}</span>
-                <button onclick="agregarAlCarrito(0)" style="background: var(--naranja-rapidin); border: none; width: 28px; height: 28px; border-radius: 8px; font-weight: bold; color: var(--azul-rapidin); cursor: pointer;">+</button>
-            `;
+            let destacadosHtml = destacadosFiltrados.map(item => {
+                let realIdx = menuCliente.findIndex(m => m.id === item.id);
+                let stockItem = stockBuffet.find(s => s.nombre === item.nombre);
+                let sinStock = stockItem && stockItem.stock <= 0;
+
+                return `
+                    <div style="background: linear-gradient(135deg, var(--azul-rapidin) 0%, var(--azul-claro) 100%); color: var(--blanco); border-radius: 20px; padding: 14px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 6px 15px rgba(11, 41, 57, 0.15); gap: 10px;">
+                        <img src="${item.imagen}" alt="${item.nombre}" style="width: 55px; height: 55px; border-radius: 14px; object-fit: cover; border: 2px solid rgba(255,255,255,0.2);">
+                        <div style="flex-grow: 1;">
+                            <span style="font-size: 8px; text-transform: uppercase; color: var(--naranja-rapidin); font-weight:800; letter-spacing: 1px;">Destacado del día</span>
+                            <h3 style="font-family: 'Rhodesia', serif; font-size: 14px; color: var(--naranja-rapidin); line-height: 1.1; margin-top: 2px;">${item.nombre}</h3>
+                            <p style="font-size: 11px; opacity: 0.85; margin-top: 2px;">$${item.precio.toLocaleString()} ${sinStock ? '• <b style="color:#ef4444;">Agotado</b>' : ''}</p>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 6px;">
+                            <button onclick="quitarDelCarrito(${realIdx})" style="background: rgba(0,0,0,0.3); border: none; width: 26px; height: 26px; border-radius: 8px; font-weight: bold; color: #fff; cursor: pointer;">-</button>
+                            <span style="color: #fff; font-weight: bold; font-size: 13px; min-width: 12px; text-align: center;">${item.qty}</span>
+                            ${sinStock ? '' : `<button onclick="agregarAlCarrito(${realIdx})" style="background: var(--naranja-rapidin); border: none; width: 26px; height: 26px; border-radius: 8px; font-weight: bold; color: var(--azul-rapidin); cursor: pointer;">+</button>`}
+                        </div>
+                    </div>
+                `;
+            }).join('');
+            contenedorBannerDestacados.innerHTML = destacadosHtml;
+        } else {
+            contenedorBannerDestacados.style.display = 'none';
         }
     }
     
+    let itemsFiltrados = [];
+    if (categoriaActiva !== 'todos') {
+        itemsFiltrados = menuCliente.filter(item => {
+            if (item.tipo.startsWith('destacado-')) return false;
+            return item.categoria === categoriaActiva;
+        });
+    }
+
     let listaHtml = document.getElementById('lista-menu-html');
     if (listaHtml) {
-        listaHtml.innerHTML = menuCliente.slice(1).map((item, idx) => {
-            let realIdx = idx + 1;
-            let stockItem = stockBuffet.find(s => s.nombre === item.nombre);
-            let sinStock = stockItem && stockItem.stock <= 0;
-
-            if (sinStock && item.qty > stockItem.stock) {
-                item.qty = stockItem.stock;
-            }
-
-            return `
-                <div style="background: #fff; padding: 10px 14px; border-radius: 14px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 5px rgba(0,0,0,0.03);">
-                    <div>
-                        <div style="font-size: 13px; font-weight: 700; color: var(--azul-rapidin);">${item.nombre}</div>
-                        <div style="font-size: 11px; color: var(--gris-texto);">$${item.precio.toLocaleString()} ${sinStock ? '• <b style="color:#ef4444;">Agotado</b>' : `• Stock: ${stockItem.stock}`}</div>
-                    </div>
-                    <div style="display: flex; align-items: center; gap: 8px;">
-                        <button onclick="quitarDelCarrito(${realIdx})" style="background: #e5e7eb; border: none; width: 26px; height: 26px; border-radius: 8px; font-weight: bold; cursor: pointer;">-</button>
-                        <span style="font-size: 13px; font-weight: 700; min-width: 12px; text-align: center;">${item.qty}</span>
-                        ${sinStock ? '' : `<button onclick="agregarAlCarrito(${realIdx})" style="background: var(--naranja-rapidin); border: none; width: 26px; height: 26px; border-radius: 8px; font-weight: bold; cursor: pointer; color: var(--azul-rapidin);">+</button>`}
-                    </div>
+        if (itemsFiltrados.length > 0) {
+            listaHtml.innerHTML = `
+                <div style="display: flex; justify-content: space-between; align-items: center; margin: 4px 0;">
+                    <span style="font-weight: 700; font-size: 14px; color: var(--azul-rapidin);">Opciones de ${categoriaActiva.toUpperCase()}:</span>
+                    <button onclick="filtrarCategoria('todos')" style="background: var(--naranja-rapidin); border: none; padding: 4px 10px; border-radius: 10px; font-weight: 700; font-size: 11px; cursor: pointer; color: var(--azul-rapidin);">Volver al Inicio</button>
                 </div>
-            `;
-        }).join('');
+            ` + itemsFiltrados.map((item) => {
+                let realIdx = menuCliente.findIndex(m => m.id === item.id);
+                let stockItem = stockBuffet.find(s => s.nombre === item.nombre);
+                let sinStock = stockItem && stockItem.stock <= 0;
+
+                if (sinStock && item.qty > stockItem.stock) {
+                    item.qty = stockItem.stock;
+                }
+
+                return `
+                    <div style="background: #fff; padding: 10px 14px; border-radius: 14px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 5px rgba(0,0,0,0.03); gap: 10px;">
+                        <img src="${item.imagen}" alt="${item.nombre}" style="width: 48px; height: 48px; border-radius: 12px; object-fit: cover;">
+                        <div style="flex-grow: 1;">
+                            <div style="font-size: 13px; font-weight: 700; color: var(--azul-rapidin);">${item.nombre}</div>
+                            <div style="font-size: 11px; color: var(--gris-texto);">$${item.precio.toLocaleString()} ${sinStock ? '• <b style="color:#ef4444;">Agotado</b>' : `• Stock: ${stockItem.stock}`}</div>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 8px;">
+                            <button onclick="quitarDelCarrito(${realIdx})" style="background: #e5e7eb; border: none; width: 26px; height: 26px; border-radius: 8px; font-weight: bold; cursor: pointer;">-</button>
+                            <span style="font-size: 13px; font-weight: 700; min-width: 12px; text-align: center;">${item.qty}</span>
+                            ${sinStock ? '' : `<button onclick="agregarAlCarrito(${realIdx})" style="background: var(--naranja-rapidin); border: none; width: 26px; height: 26px; border-radius: 8px; font-weight: bold; cursor: pointer; color: var(--azul-rapidin);">+</button>`}
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        } else {
+            listaHtml.innerHTML = '';
+        }
     }
 
     let contenedorBoton = document.getElementById('contenedor-boton-ver-pedido');
@@ -168,21 +237,32 @@ function mostrarCliente(id) {
                 <span style="font-size: 11px; background: #e5e7eb; padding: 4px 10px; border-radius: 20px; font-weight: 600;">UNM Moreno</span>
             </div>
 
-            <!-- Plato del Día -->
-            <div class="plato-banner">
-                <div>
-                    <span style="font-size: 10px; text-transform: uppercase; color: var(--naranja-rapidin); font-weight:800;">Plato del día</span>
-                    <h2>PLATO<br>DEL DÍA</h2>
-                    <p style="font-size:12px; opacity:0.9; margin-top: 4px;">guiso de lentejas • $12.000</p>
-                </div>
-                <div style="display: flex; align-items: center; gap: 6px;" id="contenedor-plato-dia-btn">
-                    <button onclick="quitarDelCarrito(0)" style="background: rgba(0,0,0,0.3); border: none; width: 28px; height: 28px; border-radius: 8px; font-weight: bold; color: #fff; cursor: pointer;">-</button>
-                    <span id="qty-plato-0" style="color: #fff; font-weight: bold; font-size: 14px;">0</span>
-                    <button onclick="agregarAlCarrito(0)" style="background: var(--naranja-rapidin); border: none; width: 28px; height: 28px; border-radius: 8px; font-weight: bold; color: var(--azul-rapidin); cursor: pointer;">+</button>
+            <!-- Menús Destacados (Arriba) -->
+            <div id="contenedor-banner-destacados"></div>
+
+            <!-- Grilla de Categorías (Abajo) -->
+            <div id="contenedor-categorias-html">
+                <div style="font-weight: 700; font-size: 14px; color: var(--azul-rapidin); margin-bottom: 8px;">Categorías:</div>
+                <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 14px;">
+                    <div onclick="filtrarCategoria('platos')" style="background: #fff; color: var(--azul-rapidin); padding: 14px; border-radius: 16px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.04);">
+                        <svg style="width: 26px; height: 26px; fill: var(--azul-rapidin);" viewBox="0 0 24 24"><path d="M11 9H9V2H7v7H5V2H3v7c0 2.12 1.66 3.84 3.75 3.97V22h2.5v-9.03C11.34 12.84 13 11.12 13 9V2h-2v7zm5-3v8h2.5v8H21V2c-2.76 0-5 2.24-5 4z"/></svg>
+                        <span style="font-size: 12px; font-weight: 700;">Platos</span>
+                    </div>
+                    <div onclick="filtrarCategoria('kiosco')" style="background: #fff; color: var(--azul-rapidin); padding: 14px; border-radius: 16px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.04);">
+                        <svg style="width: 26px; height: 26px; fill: var(--azul-rapidin);" viewBox="0 0 24 24"><path d="M20 4H4v2h16V4m1 10v-2l-1-5H4l-1 5v2h1v6h10v-6h4v6h2v-6h1m-9 4H6v-4h6v4z"/></svg>
+                        <span style="font-size: 12px; font-weight: 700;">Kiosco</span>
+                    </div>
+                    <div onclick="filtrarCategoria('cafeteria')" style="background: #fff; color: var(--azul-rapidin); padding: 14px; border-radius: 16px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.04);">
+                        <svg style="width: 26px; height: 26px; fill: var(--azul-rapidin);" viewBox="0 0 24 24"><path d="M2 21h18v-2H2M20 8h-2V5h2m0-2H4v10a4 4 0 0 0 4 4h6a4 4 0 0 0 4-4v-3h2a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2z"/></svg>
+                        <span style="font-size: 12px; font-weight: 700;">Cafetería</span>
+                    </div>
+                    <div onclick="filtrarCategoria('bebidas')" style="background: #fff; color: var(--azul-rapidin); padding: 14px; border-radius: 16px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.04);">
+                        <svg style="width: 26px; height: 26px; fill: var(--azul-rapidin);" viewBox="0 0 24 24"><path d="M3 2l2.01 18.23C5.13 21.23 5.97 22 7 22h10c1.03 0 1.87-.77 1.99-1.77L21 2H3zm9 17c-1.66 0-3-1.34-3-3 0-2 3-5.4 3-5.4s3 3.4 3 5.4c0 1.66-1.34 3-3 3zm6.33-13H5.67l-.44-4h13.54l-.44 4z"/></svg>
+                        <span style="font-size: 12px; font-weight: 700;">Bebidas</span>
+                    </div>
                 </div>
             </div>
 
-            <div style="font-weight: 700; font-size:14px; color: var(--azul-rapidin); margin-top:2px;">Menú Rápido:</div>
             <div style="display: flex; flex-direction: column; gap: 8px;" id="lista-menu-html"></div>
             <div id="contenedor-boton-ver-pedido"></div>
         `;
@@ -236,8 +316,9 @@ function mostrarCliente(id) {
                 ${itemsEnCarrito.length > 0 ? itemsEnCarrito.map(i => {
                     let originalIndex = menuCliente.findIndex(m => m.id === i.id);
                     return `
-                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; border-bottom: 1px solid #f3f4f6; padding-bottom: 6px;">
-                            <div>
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; border-bottom: 1px solid #f3f4f6; padding-bottom: 6px; gap: 8px;">
+                            <img src="${i.imagen}" style="width: 36px; height: 36px; border-radius: 8px; object-fit: cover;">
+                            <div style="flex-grow: 1;">
                                 <div style="font-weight: 700; font-size: 12px;">${i.nombre}</div>                                 <div style="font-size: 11px; color: var(--gris-texto);">$${(i.precio * i.qty).toLocaleString()}</div>
                             </div>
                             <div style="display: flex; align-items: center; gap: 6px;">
@@ -358,7 +439,7 @@ function mostrarBuffet(seccion) {
             Órdenes
         </button>
         <button class="nav-icon ${seccion==='historial'?'active':''}" onclick="mostrarBuffet('historial')">
-            <svg viewBox="0 0 24 24"><path d="M13 3c-4.97 0-9 4.03-9 9H1l3.89 3.89.07.14L9 12H6c0-3.87 3.13-7 7-7s7 3.13 7 7-3.13 7-7 7c-1.93 0-3.68-.79-4.94-2.06l-1.42 1.42C8.27 19.99 10.51 21 13 21c4.97 0 9-4.03 9-9s-4.03-9-9-9zm-1 5v5l4.28 2.54.72-1.21-3.5-2.08V8H12z"/></svg>
+            <svg viewBox="0 0 24 24"><path d="M13 3c-4.97 0-9 4.03-9 9H1l3.89 3.89.07.14L9 12H6c0-3.87 3.13-7 7-7s7 3.13 7 7-3.13 7-7 7-1.93 0-3.68-.79-4.94-2.06l-1.42 1.42C8.27 19.99 10.51 21 13 21c4.97 0 9-4.03 9-9s-4.03-9-9-9zm-1 5v5l4.28 2.54.72-1.21-3.5-2.08V8H12z"/></svg>
             Historial
         </button>
         <button class="nav-icon ${seccion==='stock'?'active':''}" onclick="mostrarBuffet('stock')">
