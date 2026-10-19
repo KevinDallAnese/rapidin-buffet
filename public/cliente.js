@@ -299,4 +299,4 @@ function mostrarCliente(id, registrarHistorial = true) {
                         <span style="font-size: 12px; font-weight: 700;">Kiosco</span>
                     </div>
                     <div onclick="filtrarCategoria('cafeteria')" style="${estiloCafeteria} padding: 14px; border-radius: 16px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.04); transition: 0.2s;">
-                        <svg style="width: 26px; height: 26px; ${estiloCafeteriaSvg}" viewBox1
+                        <svg style="width: 26px; height: 26px; ${estiloCafeteriaSvg}" viewBoxq
