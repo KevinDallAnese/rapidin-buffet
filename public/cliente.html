@@ -12,7 +12,7 @@
 
     <!-- PANTALLA DE SELECCIÓN DE ROL (LOGIN) -->
     <div id="pantalla-login" style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: var(--azul-rapidin); z-index: 9999; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 24px; text-align: center;">
-        <img src="/icon-192.png" alt="Rapidin Logo" class="login-logo">
+        <img src="/icon-192.png" alt="Rapidin Logo" style="width: 130px; height: auto; object-fit: contain; margin-bottom: 4px;">
         <p style="color: var(--fondo-app); font-size: 14px; opacity: 0.85; margin-bottom: 36px;">Buffet Universitario - UNM Moreno</p>
         
         <div style="width: 100%; max-width: 320px; display: flex; flex-direction: column; gap: 14px;">
@@ -27,7 +27,7 @@
 
     <!-- LOADER INTERNO -->
     <div id="app-loader" style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: #0b2939; z-index: 9998; display: none; flex-direction: column; justify-content: center; align-items: center; transition: opacity 0.5s ease;">
-        <img src="/icon-192.png" alt="Rapidin Logo" class="login-logo">
+        <img src="/icon-192.png" alt="Rapidin Logo" style="width: 130px; height: auto; object-fit: contain; margin-bottom: 4px;">
         <div class="minimal-spinner" style="margin-top: 15px;"></div>
     </div>
 
@@ -75,13 +75,46 @@
     <script src="/socket.io/socket.io.js"></script>
     <script src="cliente.js"></script>
     <script>
-  if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => {
-      navigator.serviceWorker.register('/sw.js')
-        .then((reg) => console.log('Service Worker registrado con éxito', reg))
-        .catch((err) => console.log('Error al registrar el Service Worker', err));
-    });
-  }
-</script>
+        // Función de selección de rol con validación de credenciales para admin
+        function seleccionarRol(rol) {
+            if (rol === 'admin') {
+                let usuarioInput = prompt("Ingrese usuario de administración:");
+                if (!usuarioInput) return;
+                
+                let passwordInput = prompt("Ingrese contraseña:");
+                if (!passwordInput) return;
+
+                fetch('/api/login-admin', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ usuario: usuarioInput, password: passwordInput })
+                })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.success) {
+                        window.location.href = '/admin';
+                    } else {
+                        alert("Usuario o contraseña incorrectos.");
+                    }
+                })
+                .catch(err => {
+                    console.error("Error de conexión:", err);
+                    alert("No se pudo conectar con el servidor.");
+                });
+            } else {
+                let login = document.getElementById('pantalla-login');
+                if(login) login.style.display = 'none';
+                mostrarCliente(1);
+            }
+        }
+
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js')
+                    .then((reg) => console.log('Service Worker registrado con éxito', reg))
+                    .catch((err) => console.log('Error al registrar el Service Worker', err));
+            });
+        }
+    </script>
 </body>
 </html>
