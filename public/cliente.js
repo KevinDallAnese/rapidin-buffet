@@ -35,7 +35,6 @@ socket.on('actualizar-estado', (data) => {
     pedidosBuffetServidor = data.pedidos;
     tiempoEsperaServidor = data.tiempoEspera || 5;
 
-    // Sincronizar cada ticket activo del alumno
     misTicketsActivos.forEach(ticket => {
         let ordenEncontrada = pedidosBuffetServidor.find(o => o.id === ticket.idNro);
         if (ordenEncontrada) {
@@ -52,9 +51,7 @@ socket.on('actualizar-estado', (data) => {
         }
     });
 
-    // Mover los entregados fuera de activos
     misTicketsActivos = misTicketsActivos.filter(t => t.estado !== "Entregado");
-
     actualizarVistaActual();
 });
 
@@ -232,17 +229,22 @@ function renderizarMenuPrincipal() {
     }
 }
 
-// Función de navegación con soporte para History API (gestos del celular)
 function mostrarCliente(id, registrarHistorial = true) {
     tabClienteActiva = id;
 
     if (registrarHistorial) {
-        history.pushState({ seccion: id }, "", `#seccion-${id}`);
+        try {
+            history.pushState({ seccion: id }, "", `#seccion-${id}`);
+        } catch (e) {
+            console.error(e);
+        }
     }
 
     const container = document.getElementById('app-screen');
     const nav = document.getElementById('nav-bar');
     
+    if (!container || !nav) return;
+
     nav.innerHTML = `
         <button class="nav-icon ${id===1?'active':''}" onclick="mostrarCliente(1)">
             <svg viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
@@ -299,4 +301,4 @@ function mostrarCliente(id, registrarHistorial = true) {
                         <span style="font-size: 12px; font-weight: 700;">Kiosco</span>
                     </div>
                     <div onclick="filtrarCategoria('cafeteria')" style="${estiloCafeteria} padding: 14px; border-radius: 16px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.04); transition: 0.2s;">
-                        <svg style="width: 26px; height: 26px; ${estiloCafeteriaSvg}" viewBoxq
+                        <svg style="width: 26px; height: 26px; ${estiloCafeteriaSvg}" viewBox="0 0 24 24"><path d="M2 21h18v-2H2M20 8h-2V5h2m0-2H4
