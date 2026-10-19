@@ -7,6 +7,8 @@ const app = express();
 const server = http.createServer(app);
 const io = new Server(server);
 
+// Middleware necesario para leer JSON en las peticiones POST
+app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.get('/', (req, res) => {
@@ -15,6 +17,20 @@ app.get('/', (req, res) => {
 
 app.get('/admin', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'admin.html'));
+});
+
+// --- CREDENCIALES FIJAS DEL ADMIN ---
+const ADMIN_USER = "buffet";
+const ADMIN_PASS = "unm2026"; // Podes cambiar la contraseña acá
+
+// --- RUTA PARA VALIDAR EL LOGIN DEL ADMIN ---
+app.post('/api/login-admin', (req, res) => {
+    const { usuario, password } = req.body;
+    if (usuario === ADMIN_USER && password === ADMIN_PASS) {
+        res.json({ success: true });
+    } else {
+        res.status(401).json({ success: false, message: "Credenciales incorrectas" });
+    }
 });
 
 let estadoBuffet = {
@@ -53,7 +69,6 @@ io.on('connection', (socket) => {
         });
 
         estadoBuffet.pedidos.push(data.orden);
-        // Tiempo dinámico basado en la carga real de la cocina
         estadoBuffet.tiempoEspera = estadoBuffet.pedidos.length === 0 ? 0 : 4 + (estadoBuffet.pedidos.length * 3);
 
         io.emit('actualizar-estado', estadoBuffet);
