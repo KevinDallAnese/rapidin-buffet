@@ -271,7 +271,7 @@ function mostrarCliente(id) {
 
         container.innerHTML = `
             <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 5px;">
-                <span style="font-weight: 800; font-size: 20px; font-family: 'Rhodesia'; color: var(--azul-rapidin);">Rapidin</span>
+                <img src="/icon-192.png" alt="Rapidin Logo" style="height: 34px; width: auto; object-fit: contain;">
                 <span style="font-size: 11px; background: #e5e7eb; padding: 4px 10px; border-radius: 20px; font-weight: 600;">UNM Moreno</span>
             </div>
 
