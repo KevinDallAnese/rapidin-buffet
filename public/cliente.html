@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rapidin - UNM</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="manifest" href="/manifest.json">
+<meta name="theme-color" content="#0b2939">
+</head>
+<body>
+
+    <!-- PANTALLA DE SELECCIÓN DE ROL (LOGIN) -->
+    <div id="pantalla-login" style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: var(--azul-rapidin); z-index: 9999; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 24px; text-align: center;">
+        <h1 style="font-family: 'Rhodesia'; color: var(--naranja-rapidin); font-size: 54px; letter-spacing: 2px; margin-bottom: 4px;">Rapidin</h1>
+        <p style="color: var(--fondo-app); font-size: 14px; opacity: 0.85; margin-bottom: 36px;">Buffet Universitario - UNM Moreno</p>
+        
+        <div style="width: 100%; max-width: 320px; display: flex; flex-direction: column; gap: 14px;">
+            <div onclick="seleccionarRol('alumno')" style="background: #fff; color: var(--azul-rapidin); padding: 18px; border-radius: 20px; cursor: pointer; font-weight: 700; font-size: 15px; box-shadow: 0 8px 20px rgba(0,0,0,0.2); transition: 0.2s;">
+                Ingresar como Alumno
+            </div>
+            <div onclick="seleccionarRol('admin')" style="background: var(--naranja-rapidin); color: var(--azul-rapidin); padding: 18px; border-radius: 20px; cursor: pointer; font-weight: 700; font-size: 15px; box-shadow: 0 8px 20px rgba(0,0,0,0.2); transition: 0.2s;">
+                Ingresar como Personal del Buffet
+            </div>
+        </div>
+    </div>
+
+    <!-- LOADER INTERNO -->
+    <div id="app-loader" style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: #0b2939; z-index: 9998; display: none; flex-direction: column; justify-content: center; align-items: center; transition: opacity 0.5s ease;">
+        <h1 style="font-family: 'Rhodesia'; color: var(--naranja-rapidin); font-size: 52px; letter-spacing: 2px; margin-bottom: 4px;">Rapidin</h1>
+        <div class="minimal-spinner" style="margin-top: 15px;"></div>
+    </div>
+
+    <div class="phone-frame" style="margin-top: 20px;">
+        <div class="phone-header-notch"></div>
+
+        <div id="app-screen" class="screen-content">
+            <!-- Contenido dinámico del cliente -->
+        </div>
+
+        <!-- NAVEGACIÓN CLIENTE -->
+        <nav class="bottom-nav" id="nav-bar">
+            <button class="nav-icon active" onclick="mostrarCliente(1)">
+                <svg viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+                Menú
+            </button>
+            <button class="nav-icon" onclick="mostrarCliente(2)">
+                <svg viewBox="0 0 24 24"><path d="M21 5c-1.11 0-2 .89-2 2v2H5V7c0-1.11-.89-2-2-2s-2 .89-2 2v12c0 1.1.9 2 2 2h18c1.1 0 2-.9 2-2V7c0-1.11-.9-2-2-2m0 14H3V9h18z"/></svg>
+                Ticket
+            </button>
+            <button class="nav-icon" onclick="mostrarCliente(4)">
+                <svg viewBox="0 0 24 24"><path d="M13 3c-4.97 0-9 4.03-9 9H1l3.89 3.89.07.14L9 12H6c0-3.87 3.13-7 7-7s7 3.13 7 7-3.13 7-7 7-1.93 0-3.68-.79-4.94-2.06l-1.42 1.42C8.27 19.99 10.51 21 13 21c4.97 0 9-4.03 9-9s-4.03-9-9-9zm-1 5v5l4.28 2.54.72-1.21-3.5-2.08V8H12z"/></svg>
+                Historial
+            </button>
+            <button class="nav-icon" onclick="mostrarCliente(3)">
+                <svg viewBox="0 0 24 24"><path d="M21 18v1c0 1.1-.9 2-2 2H5c-1.11 0-2-.9-2-2V5c0-1.1.89-2 2-2h14c1.1 0 2 .9 2 2v1h-9c-1.11 0-2 .9-2 2v8c0 1.1.89 2 2 2zm-9-2h10V8H12zm4-2.5c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5z"/></svg>
+                Pago
+            </button>
+        </nav>
+    </div>
+
+    <!-- MODAL QR -->
+    <div id="modal-comprobante" class="modal-overlay" style="display: none;">
+        <div class="modal-content">
+            <div style="background: var(--fondo-app); width: 70px; height: 70px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 12px auto;">
+                <svg style="width:32px; height:32px; fill:var(--azul-rapidin);" viewBox="0 0 24 24"><path d="M2 9V3h6v2H4v4H2m14-6h6v6h-2V5h-4V3M2 15h2v4h4v2H2v-6m20 0v6h-6v-2h4v-4h2M7 9h10v6H7V9Z"/></svg>
+            </div>
+            <h3 style="font-family:'Rhodesia'; color:var(--azul-rapidin); font-size:24px;">Comprobante Digital</h3>
+            <p style="font-size:13px; color:var(--gris-texto); margin: 6px 0 16px 0;">Orden <b id="modal-nro-orden">#----</b> • Take Away</p>
+            <div style="background:var(--fondo-app); padding:12px; border-radius:14px; font-size:12px; margin-bottom: 20px; color: var(--azul-rapidin); font-weight: 500;">Presentá este código QR en la ventanilla rápida del buffet.</div>
+            <button onclick="cerrarModal()" style="background:var(--naranja-rapidin); border:none; padding:10px 24px; border-radius:14px; font-weight:700; cursor:pointer; color:var(--azul-rapidin); width: 100%;">Entendido</button>
+        </div>
+    </div>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="cliente.js"></script>
+</body>
+</html>

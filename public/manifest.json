@@ -1,0 +1,21 @@
+{
+  "name": "Rapidin - Buffet UNM",
+  "short_name": "Rapidin",
+  "start_url": "/",
+  "display": "fullscreen",
+  "background_color": "#0b2939",
+  "theme_color": "#0b2939",
+  "description": "Sistema de pedidos y gestión rápida para el buffet universitario.",
+  "icons": [
+    {
+      "src": "/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

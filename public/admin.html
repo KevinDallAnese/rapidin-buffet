@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rapidin - Panel Buffet</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+    <div class="phone-frame" style="margin-top: 20px;">
+        <div class="phone-header-notch"></div>
+
+        <div id="admin-screen" class="screen-content" style="padding-top: 15px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                <span style="font-weight: 800; font-size: 20px; font-family: 'Rhodesia'; color: var(--azul-rapidin);">Panel Cocina</span>
+                <span style="font-size: 11px; background: var(--naranja-rapidin); color: var(--azul-rapidin); padding: 4px 10px; border-radius: 20px; font-weight: 700;">Admin Buffet</span>
+            </div>
+
+            <div id="admin-contenido" style="display: flex; flex-direction: column; gap: 12px; flex-grow: 1;">
+                <!-- Dinámico -->
+            </div>
+        </div>
+
+        <!-- NAVEGACIÓN ADMIN -->
+        <nav class="bottom-nav" id="admin-nav">
+            <button class="nav-icon active" onclick="mostrarBuffet('pedidos')" style="position: relative;" id="nav-pedidos-btn">
+                <svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2m-5 14H7v-2h7zm3-4H7v-2h10zm0-4H7V7h10z"/></svg>
+                Órdenes
+                <span id="notif-badge-admin" style="position: absolute; top: 4px; right: 28px; background: #ef4444; color: #fff; font-size: 9px; padding: 2px 5px; border-radius: 10px; font-weight: bold; display: none;">0</span>
+            </button>
+            <button class="nav-icon" onclick="mostrarBuffet('historial')" id="nav-historial-btn">
+                <svg viewBox="0 0 24 24"><path d="M13 3C8 3 4 7 4 12H1l4 4 4-4H6c0-3.87 3.13-7 7-7s7 3.13 7 7-3.13 7-7 7c-1.93 0-3.68-.79-4.94-2.06l-1.42 1.42C8.27 19.99 10.51 21 13 21c4.97 0 9-4.03 9-9s-4.03-9-9-9zm-1 5v5l4.28 2.54.72-1.21-3.5-2.08V8H12z"/></svg>
+                Historial
+            </button>
+            <button class="nav-icon" onclick="mostrarBuffet('stock')" id="nav-stock-btn">
+                <svg viewBox="0 0 24 24"><path d="M20 13H4c-.55 0-1 .45-1 1v6c0 .55.45 1 1 1h16c.55 0 1-.45 1-1v-6c0-.55-.45-1-1-1m0-10H4c-.55 0-1 .45-1 1v6c0 .55.45 1 1 1h16c.55 0 1-.45 1-1V4c0-.55-.45-1-1-1M11 7H6V5h5zm0 10H6v-2h5zm7-4h-5v-2h5zm0-10h-5V5h5z"/></svg>
+                Stock
+            </button>
+        </nav>
+    </div>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="admin.js"></script>
+</body>
+</html>
