@@ -75,15 +75,20 @@ body {
     body {
         background-color: var(--fondo-app);
         justify-content: flex-start;
+        height: 100vh;
+        overflow: hidden;
     }
 
     .phone-frame {
         width: 100vw;
-        height: calc(100vh - 65px);
+        height: 100vh;
         border: none;
         border-radius: 0;
         box-shadow: none;
         background-color: var(--fondo-app);
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
     }
 
     .phone-header-notch {
