@@ -10,19 +10,45 @@
 </head>
 <body>
 
-    <!-- PANTALLA DE SELECCIÓN DE ROL (LOGIN) -->
+    <!-- PANTALLA DE SELECCIÓN DE ROL (LOGIN ESTÉTICO) -->
     <div id="pantalla-login" style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: var(--azul-rapidin); z-index: 9999; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 24px; text-align: center;">
-        <img src="/icon-192.png" alt="Rapidin Logo" style="width: 130px; height: auto; object-fit: contain; margin-bottom: 4px;">
-        <p style="color: var(--fondo-app); font-size: 14px; opacity: 0.85; margin-bottom: 36px;">Buffet Universitario - UNM Moreno</p>
         
-        <div style="width: 100%; max-width: 320px; display: flex; flex-direction: column; gap: 14px;">
+        <!-- LOGO Y TÍTULO -->
+        <img src="/icon-192.png" alt="Rapidin Logo" style="width: 120px; height: auto; object-fit: contain; margin-bottom: 6px;">
+        <p style="color: var(--fondo-app); font-size: 14px; opacity: 0.85; margin-bottom: 32px;">Buffet Universitario - UNM Moreno</p>
+        
+        <!-- OPCIONES INICIALES -->
+        <div id="menu-roles" style="width: 100%; max-width: 320px; display: flex; flex-direction: column; gap: 14px;">
             <div onclick="seleccionarRol('alumno')" style="background: #fff; color: var(--azul-rapidin); padding: 18px; border-radius: 20px; cursor: pointer; font-weight: 700; font-size: 15px; box-shadow: 0 8px 20px rgba(0,0,0,0.2); transition: 0.2s;">
                 Ingresar como Alumno
             </div>
-            <div onclick="seleccionarRol('admin')" style="background: var(--naranja-rapidin); color: var(--azul-rapidin); padding: 18px; border-radius: 20px; cursor: pointer; font-weight: 700; font-size: 15px; box-shadow: 0 8px 20px rgba(0,0,0,0.2); transition: 0.2s;">
+            <div onclick="mostrarFormAdmin()" style="background: var(--naranja-rapidin); color: var(--azul-rapidin); padding: 18px; border-radius: 20px; cursor: pointer; font-weight: 700; font-size: 15px; box-shadow: 0 8px 20px rgba(0,0,0,0.2); transition: 0.2s;">
                 Ingresar como Personal del Buffet
             </div>
         </div>
+
+        <!-- FORMULARIO DE ADMIN ESTILIZADO (OCULTO INICIALMENTE) -->
+        <div id="form-admin" style="display: none; width: 100%; max-width: 320px; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.15); padding: 22px; border-radius: 24px; backdrop-filter: blur(10px); flex-direction: column; gap: 14px; text-align: left;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2px;">
+                <span style="color: #fff; font-weight: 700; font-size: 14px;">Acceso Personal</span>
+                <span onclick="volverRoles()" style="color: var(--naranja-rapidin); font-size: 12px; cursor: pointer; font-weight: 600;">Volver</span>
+            </div>
+            
+            <div>
+                <label style="color: var(--fondo-app); font-size: 11px; font-weight: 600; display: block; margin-bottom: 4px;">Usuario</label>
+                <input type="text" id="admin-user" placeholder="Ej: buffet" style="width: 100%; padding: 12px 14px; border-radius: 12px; border: none; background: #fff; color: var(--azul-rapidin); font-size: 13px; outline: none;">
+            </div>
+
+            <div>
+                <label style="color: var(--fondo-app); font-size: 11px; font-weight: 600; display: block; margin-bottom: 4px;">Contraseña</label>
+                <input type="password" id="admin-pass" placeholder="••••••••" style="width: 100%; padding: 12px 14px; border-radius: 12px; border: none; background: #fff; color: var(--azul-rapidin); font-size: 13px; outline: none;">
+            </div>
+
+            <button onclick="ejecutarLoginAdmin()" style="background: var(--naranja-rapidin); color: var(--azul-rapidin); border: none; padding: 14px; border-radius: 14px; font-weight: 800; font-size: 14px; cursor: pointer; margin-top: 6px; box-shadow: 0 4px 15px rgba(253,151,2,0.3);">
+                Iniciar Sesión
+            </button>
+        </div>
+
     </div>
 
     <!-- LOADER INTERNO -->
@@ -75,37 +101,50 @@
     <script src="/socket.io/socket.io.js"></script>
     <script src="cliente.js"></script>
     <script>
-        // Función de selección de rol con validación de credenciales para admin
         function seleccionarRol(rol) {
-            if (rol === 'admin') {
-                let usuarioInput = prompt("Ingrese usuario de administración:");
-                if (!usuarioInput) return;
-                
-                let passwordInput = prompt("Ingrese contraseña:");
-                if (!passwordInput) return;
-
-                fetch('/api/login-admin', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ usuario: usuarioInput, password: passwordInput })
-                })
-                .then(res => res.json())
-                .then(data => {
-                    if (data.success) {
-                        window.location.href = '/admin';
-                    } else {
-                        alert("Usuario o contraseña incorrectos.");
-                    }
-                })
-                .catch(err => {
-                    console.error("Error de conexión:", err);
-                    alert("No se pudo conectar con el servidor.");
-                });
-            } else {
+            if (rol === 'alumno') {
                 let login = document.getElementById('pantalla-login');
                 if(login) login.style.display = 'none';
                 mostrarCliente(1);
             }
+        }
+
+        function mostrarFormAdmin() {
+            document.getElementById('menu-roles').style.display = 'none';
+            document.getElementById('form-admin').style.display = 'flex';
+        }
+
+        function volverRoles() {
+            document.getElementById('form-admin').style.display = 'none';
+            document.getElementById('menu-roles').style.display = 'flex';
+        }
+
+        function ejecutarLoginAdmin() {
+            let usuarioInput = document.getElementById('admin-user').value.trim();
+            let passwordInput = document.getElementById('admin-pass').value.trim();
+
+            if (!usuarioInput || !passwordInput) {
+                alert("Por favor, completa ambos campos.");
+                return;
+            }
+
+            fetch('/api/login-admin', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ usuario: usuarioInput, password: passwordInput })
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    window.location.href = '/admin';
+                } else {
+                    alert("Usuario o contraseña incorrectos.");
+                }
+            })
+            .catch(err => {
+                console.error("Error de conexión:", err);
+                alert("No se pudo conectar con el servidor.");
+            });
         }
 
         if ('serviceWorker' in navigator) {
