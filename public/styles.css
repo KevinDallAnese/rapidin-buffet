@@ -232,10 +232,12 @@ body {
 .bottom-nav {
     background-color: var(--azul-rapidin);
     height: 65px;
+    min-height: 65px;
     display: flex;
     justify-content: space-around;
     align-items: center;
     border-top: 1px solid rgba(255,255,255,0.05);
+    width: 100%;
 }
 
 .nav-icon {
@@ -263,6 +265,23 @@ body {
     opacity: 1;
     color: var(--naranja-rapidin);
 }
+
+/* Estilos para el logo en la cabecera y login */
+.login-logo {
+    width: 140px;
+    height: auto;
+    object-fit: contain;
+    margin-bottom: 4px;
+}
+
+#app-screen .login-logo, 
+.screen-content img[alt="Rapidin Logo"] {
+    height: 42px;
+    width: auto;
+    object-fit: contain;
+    margin-bottom: 4px;
+}
+
 /* Estilos para las Notificaciones Flotantes (Toasts) */
 #toast-container {
     position: absolute;
@@ -307,7 +326,7 @@ body {
         transform: translateY(0);
     }
 }
-/* Clases de utilidad profesional (Anti-Slop) */
+
 .badge-estado-preparacion {
     background: #fef3c7;
     color: #b45309;
