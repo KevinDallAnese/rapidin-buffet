@@ -1,0 +1,269 @@
+@font-face {
+    font-family: 'Rhodesia';
+    src: url('https://fonts.gstatic.com/s/dmserifdisplay/v15/co3bmX5slCNuHLi8bLeY9MK7whWMhyjYpXo.woff2') format('woff2');
+    font-weight: normal;
+    font-style: normal;
+}
+
+:root {
+    --naranja-rapidin: #e67e22;
+    --naranja-hover: #d35400;
+    --azul-rapidin: #0a2533;
+    --azul-claro: #133a4f;
+    --fondo-app: #f7f3ee;
+    --fondo-tarjeta: #ffffff;
+    --blanco: #ffffff;
+    --gris-texto: #64748b;
+    --sombra-suave: 0 12px 30px -8px rgba(10, 37, 51, 0.07);
+    --sombra-flotante: 0 20px 40px -10px rgba(10, 37, 51, 0.15);
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    -webkit-tap-highlight-color: transparent;
+}
+
+body {
+    background-color: #0f141c;
+    color: var(--azul-rapidin);
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    margin: 0;
+}
+
+.minimal-spinner {
+    width: 32px;
+    height: 32px;
+    border: 3px solid rgba(230, 126, 34, 0.2);
+    border-top-color: var(--naranja-rapidin);
+    border-radius: 50%;
+    animation: spinMinimal 0.8s cubic-bezier(0.5, 0.1, 0.4, 0.9) infinite;
+}
+
+@keyframes spinMinimal {
+    to { transform: rotate(360deg); }
+}
+
+/* Marco de celular simulado con bordes refinados */
+.phone-frame {
+    width: 390px;
+    height: 800px;
+    background-color: var(--fondo-app);
+    border-radius: 46px;
+    border: 10px solid #1a2228;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 35px 70px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.08);
+}
+
+.phone-header-notch {
+    width: 120px;
+    height: 24px;
+    background-color: #1a2228;
+    border-bottom-left-radius: 16px;
+    border-bottom-right-radius: 16px;
+    align-self: center;
+    margin-bottom: 4px;
+    z-index: 10;
+}
+
+@media screen and (max-width: 480px) {
+    body {
+        background-color: var(--fondo-app);
+        justify-content: flex-start;
+        height: 100vh;
+        overflow: hidden;
+    }
+    .phone-frame {
+        width: 100vw;
+        height: 100vh;
+        border: none;
+        border-radius: 0;
+        box-shadow: none;
+        background-color: var(--fondo-app);
+    }
+    .phone-header-notch {
+        display: none;
+    }
+}
+
+.screen-content {
+    flex-grow: 1;
+    padding: 14px 20px 24px 20px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    scroll-behavior: smooth;
+}
+
+.screen-content::-webkit-scrollbar {
+    width: 4px;
+}
+.screen-content::-webkit-scrollbar-thumb {
+    background-color: rgba(10, 37, 51, 0.15);
+    border-radius: 4px;
+}
+
+/* Clases estéticas globales para reemplazar estilos en línea planos */
+.app-card {
+    background-color: var(--fondo-tarjeta);
+    border-radius: 22px;
+    padding: 16px;
+    box-shadow: var(--sombra-suave);
+    border: 1px solid rgba(10, 37, 51, 0.04);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.app-card:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 16px 30px -8px rgba(10, 37, 51, 0.1);
+}
+
+.app-input {
+    width: 100%;
+    padding: 12px 16px;
+    border-radius: 16px;
+    border: 1px solid rgba(10, 37, 51, 0.1);
+    font-size: 13.5px;
+    outline: none;
+    background: var(--blanco);
+    color: var(--azul-rapidin);
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.app-input:focus {
+    border-color: var(--naranja-rapidin);
+    box-shadow: 0 0 0 3px rgba(230, 126, 34, 0.15);
+}
+
+.codigo-grande {
+    background: linear-gradient(145deg, #0a2533 0%, #14384d 100%);
+    color: var(--naranja-rapidin);
+    border-radius: 24px;
+    text-align: center;
+    padding: 26px;
+    font-size: 42px;
+    font-family: 'Rhodesia', serif;
+    letter-spacing: 4px;
+    cursor: pointer;
+    box-shadow: var(--sombra-flotante);
+    border: 1px solid rgba(255,255,255,0.1);
+}
+
+.pay-option {
+    background-color: var(--fondo-tarjeta);
+    border-radius: 20px;
+    padding: 18px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 14px;
+    border: 1px solid rgba(10, 37, 51, 0.05);
+    box-shadow: var(--sombra-suave);
+    transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.pay-option:hover {
+    border-color: var(--naranja-rapidin);
+    transform: translateY(-2px);
+    box-shadow: 0 12px 25px -5px rgba(230, 126, 34, 0.15);
+}
+
+.modal-overlay {
+    position: absolute;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(10, 37, 51, 0.82);
+    backdrop-filter: blur(8px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 100;
+}
+
+.modal-content {
+    background: var(--fondo-tarjeta);
+    width: 88%;
+    border-radius: 32px;
+    padding: 30px;
+    text-align: center;
+    box-shadow: 0 25px 50px rgba(0,0,0,0.25);
+}
+
+.bottom-nav {
+    background-color: var(--azul-rapidin);
+    height: 72px;
+    min-height: 72px;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    border-top: 1px solid rgba(255,255,255,0.06);
+    width: 100%;
+}
+
+.nav-icon {
+    color: var(--blanco);
+    cursor: pointer;
+    background: none;
+    border: none;
+    opacity: 0.55;
+    transition: opacity 0.25s, color 0.25s, transform 0.2s;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    font-size: 11px;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+}
+
+.nav-icon svg {
+    width: 24px;
+    height: 24px;
+    fill: currentColor;
+}
+
+.nav-icon:hover {
+    opacity: 0.85;
+}
+
+.nav-icon.active {
+    opacity: 1;
+    color: var(--naranja-rapidin);
+    transform: translateY(-2px);
+}
+
+#toast-container {
+    position: absolute;
+    top: 20px; left: 20px; right: 20px;
+    z-index: 99999;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    pointer-events: none;
+}
+
+.custom-toast {
+    background: var(--azul-rapidin);
+    color: var(--blanco);
+    padding: 14px 20px;
+    border-radius: 18px;
+    font-size: 13px;
+    font-weight: 600;
+    box-shadow: 0 15px 35px rgba(0,0,0,0.25);
+    border-left: 5px solid var(--naranja-rapidin);
+    pointer-events: auto;
+}
+.custom-toast.success { border-left-color: #27ae60; }
+.custom-toast.error { border-left-color: #e74c3c; }
