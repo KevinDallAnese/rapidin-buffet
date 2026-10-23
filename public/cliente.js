@@ -11,9 +11,12 @@ let stockBuffet = [];
 let pedidosBuffetServidor = [];
 
 socket.on('actualizar-estado', (data) => {
+    // Recuperar carrito guardado previamente en el navegador
+    let carritoGuardado = JSON.parse(localStorage.getItem('rapidin_carrito')) || {};
+
     if (data && Array.isArray(data.stock)) {
         stockBuffet = data.stock.map(item => {
-            let existente = stockBuffet.find(s => s.id === item.id);
+            let qtyGuardada = carritoGuardado[item.id] || 0;
             return {
                 id: item.id,
                 nombre: item.nombre || 'Producto sin nombre',
@@ -21,7 +24,7 @@ socket.on('actualizar-estado', (data) => {
                 stock: Number(item.stock) || 0,
                 categoria: (item.categoria || 'platos').toLowerCase(),
                 imagen: item.imagen || "https://images.unsplash.com/photo-1547592166-23ac45744acd?w=150&auto=format&fit=crop&q=80",
-                qty: existente ? existente.qty : 0
+                qty: Math.min(qtyGuardada, item.stock) // Evita superar el stock actual si cambió
             };
         });
     }
@@ -51,6 +54,16 @@ socket.on('actualizar-estado', (data) => {
     misTicketsActivos = misTicketsActivos.filter(t => t.estado !== "Entregado");
     actualizarVistaActual();
 });
+
+function guardarCarritoStorage() {
+    let carritoObj = {};
+    stockBuffet.forEach(item => {
+        if (item.qty > 0) {
+            carritoObj[item.id] = item.qty;
+        }
+    });
+    localStorage.setItem('rapidin_carrito', JSON.stringify(carritoObj));
+}
 
 function mostrarToast(mensaje, tipo = "info") {
     let contenedorToast = document.getElementById('toast-container');
@@ -104,6 +117,7 @@ function agregarAlCarrito(idProducto) {
     }
 
     itemStock.qty++;
+    guardarCarritoStorage();
     actualizarVistaActual();
 }
 
@@ -111,6 +125,7 @@ function quitarDelCarrito(idProducto) {
     let itemStock = stockBuffet.find(s => s.id === idProducto);
     if (itemStock && itemStock.qty > 0) {
         itemStock.qty--;
+        guardarCarritoStorage();
         actualizarVistaActual();
     }
 }
@@ -475,6 +490,7 @@ function procesarPagoYGenerarCodigo() {
     mostrarToast("Pago acreditado correctamente. Orden generada.", "success");
 
     stockBuffet.forEach(i => i.qty = 0);
+    localStorage.removeItem('rapidin_carrito'); // Limpiar storage al concretar la compra
     mostrarCliente(2);
 }
 
