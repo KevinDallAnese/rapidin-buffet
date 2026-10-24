@@ -126,7 +126,7 @@ function mostrarBuffet(pestana) {
 }
 
 function actualizarVistaAdmin() {
-    let contenedor = document.getElementById('admin-contenido');
+    let contenedor = document.getElementById('admin-screen');
     let badgeNotif = document.getElementById('notif-badge-admin');
     let navStockBtn = document.getElementById('nav-stock-btn');
 
@@ -160,10 +160,19 @@ function actualizarVistaAdmin() {
 
     if (!contenedor) return;
 
+    let headerHtml = `
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; flex-shrink: 0;">
+            <span style="font-weight: 800; font-size: 20px; font-family: 'Rhodesia'; color: var(--azul-rapidin);">Panel Cocina</span>
+            <span style="font-size: 11px; background: var(--naranja-rapidin); color: var(--azul-rapidin); padding: 4px 10px; border-radius: 20px; font-weight: 700;">Admin Buffet</span>
+        </div>
+    `;
+
+    let contenidoDinamico = '';
+
     if (pestanaAdminActiva === 'pedidos') {
-        contenedor.innerHTML = `
+        contenidoDinamico = `
             <div style="font-weight: 700; color: var(--azul-rapidin); font-size: 14px; margin-bottom: 2px;">Órdenes Activas en Cocina:</div>
-            <div style="display: flex; flex-direction: column; gap: 12px; max-height: 520px; overflow-y: auto;">
+            <div style="display: flex; flex-direction: column; gap: 12px; overflow-y: auto;">
                 ${pedidosActuales.length > 0 ? pedidosActuales.map((p, idx) => {
                     let esPreparacion = p.estado === "En preparación";
                     let btnTexto = esPreparacion ? "Marcar Listo para Retirar" : "Marcar Entregado";
@@ -186,9 +195,9 @@ function actualizarVistaAdmin() {
             </div>
         `;
     } else if (pestanaAdminActiva === 'historial') {
-        contenedor.innerHTML = `
+        contenidoDinamico = `
             <div style="font-weight: 700; color: var(--azul-rapidin); font-size: 14px; margin-bottom: 2px;">Historial de Órdenes Entregadas:</div>
-            <div style="display: flex; flex-direction: column; gap: 12px; max-height: 520px; overflow-y: auto;">
+            <div style="display: flex; flex-direction: column; gap: 12px; overflow-y: auto;">
                 ${historialActual.length > 0 ? historialActual.map(h => `
                     <div class="app-card" style="border-left: 6px solid #27ae60;">
                         <div style="display:flex; justify-content:space-between; font-weight:700; font-size:13px;">
@@ -202,7 +211,7 @@ function actualizarVistaAdmin() {
             </div>
         `;
     } else if (pestanaAdminActiva === 'stock') {
-        contenedor.innerHTML = `
+        contenidoDinamico = `
             <div style="font-weight: 700; color: var(--azul-rapidin); font-size: 14px; margin-bottom: 2px; display: flex; justify-content: space-between; align-items: center;">
                 <span>Control y Gestión de Stock:</span>
                 ${productosAgotados > 0 ? `<span style="font-size: 11px; background: #fee2e2; color: #dc2626; padding: 2px 8px; border-radius: 6px; font-weight: 700;">¡Hay ${productosAgotados} sin stock!</span>` : ''}
@@ -225,7 +234,7 @@ function actualizarVistaAdmin() {
                 <button type="submit" style="background: var(--naranja-rapidin); color: var(--azul-rapidin); border: none; padding: 10px; border-radius: 12px; font-weight: 800; font-size: 12px; cursor: pointer; box-shadow: 0 4px 12px rgba(230,126,34,0.2);">Guardar Producto</button>
             </form>
 
-            <div style="display: flex; flex-direction: column; gap: 10px; max-height: 320px; overflow-y: auto;">
+            <div style="display: flex; flex-direction: column; gap: 10px; overflow-y: auto;">
                 ${stockActual.map((item, idx) => {
                     let sinStock = item.stock <= 0;
                     return `
@@ -248,4 +257,6 @@ function actualizarVistaAdmin() {
             </div>
         `;
     }
+
+    contenedor.innerHTML = headerHtml + contenidoDinamico;
 }
