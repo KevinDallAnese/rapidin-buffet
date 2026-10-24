@@ -83,7 +83,7 @@ function agregarNuevoProductoDesdeAdmin(event) {
     let precioInput = parseFloat(document.getElementById('nuevo-prod-precio').value);
     let stockInput = parseInt(document.getElementById('nuevo-prod-stock').value);
     let categoriaInput = document.getElementById('nuevo-prod-categoria').value;
-    let imagenInput = document.getElementById('nuevo-prod-imagen').value.trim(); // Captura el enlace de la imagen (Drive o URL)
+    let imagenInput = document.getElementById('nuevo-prod-imagen').value.trim();
 
     if (!nombreInput || isNaN(precioInput) || isNaN(stockInput) || !categoriaInput) {
         alert("Por favor, completa todos los campos correctamente.");
@@ -95,7 +95,7 @@ function agregarNuevoProductoDesdeAdmin(event) {
         precio: precioInput,
         stock: stockInput,
         categoria: categoriaInput,
-        imagen: imagenInput // Lo envía al servidor
+        imagen: imagenInput
     });
 
     document.getElementById('nuevo-prod-nombre').value = '';
@@ -168,16 +168,16 @@ function actualizarVistaAdmin() {
                     let esPreparacion = p.estado === "En preparación";
                     let btnTexto = esPreparacion ? "Marcar Listo para Retirar" : "Marcar Entregado";
                     let estiloEstado = esPreparacion ? "background: #fef3c7; color: #b45309;" : "background: #d1fae5; color: #065f46;";
-                    let notaHtml = p.nota ? `<div style="font-size: 11px; color: #d97706; margin-top: 3px; font-weight: 600;">Nota: ${p.nota}</div>` : '';
+                    let notaHtml = p.nota ? `<div style="font-size: 11px; color: #d97706; margin-top: 4px; font-weight: 600; word-break: break-word;">Nota: ${p.nota}</div>` : '';
 
                     return `
-                        <div class="app-card" style="display: flex; justify-content: space-between; align-items: center; border-left: 6px solid var(--naranja-rapidin);">
-                            <div>
+                        <div class="app-card" style="display: flex; justify-content: space-between; align-items: center; border-left: 6px solid var(--naranja-rapidin); gap: 12px;">
+                            <div style="flex: 1; min-width: 0;">
                                 <div style="font-weight: 800; font-size: 14px; color: var(--azul-rapidin);">Orden #${p.codigoTicket}</div>
-                                <div style="font-size: 12px; color: #4b5563; margin: 4px 0;">${p.detalle}</div>${notaHtml}
-                                <div style="display: inline-block; padding: 4px 10px; border-radius: 8px; font-size: 11px; font-weight: 700; ${estiloEstado}; margin-top: 4px;">${p.estado}</div>
+                                <div style="font-size: 12px; color: #4b5563; margin: 4px 0; word-break: break-word;">${p.detalle}</div>${notaHtml}
+                                <div style="display: inline-block; padding: 4px 10px; border-radius: 8px; font-size: 11px; font-weight: 700; ${estiloEstado}; margin-top: 6px;">${p.estado}</div>
                             </div>
-                            <button onclick="cambiarEstado(${idx})" style="background: var(--azul-rapidin); color: #fff; border: none; padding: 10px 14px; border-radius: 12px; font-weight: 700; font-size: 11px; cursor: pointer;">
+                            <button onclick="cambiarEstado(${idx})" style="background: var(--azul-rapidin); color: #fff; border: none; padding: 10px 12px; border-radius: 12px; font-weight: 700; font-size: 11px; cursor: pointer; white-space: nowrap; flex-shrink: 0; text-align: center; line-height: 1.3;">
                                 ${btnTexto} ➔
                             </button>
                         </div>
@@ -195,7 +195,7 @@ function actualizarVistaAdmin() {
                             <span style="color:var(--azul-rapidin);">Orden #${h.codigoTicket}</span>
                             <span style="color:#27ae60;">Entregado</span>
                         </div>
-                        <div style="font-size: 12px; color: #4b5563; margin-top: 4px;">${h.detalle}</div>${h.nota ? `<div style="font-size: 11px; color: #d97706; margin-top: 2px;">Nota: ${h.nota}</div>` : ''}
+                        <div style="font-size: 12px; color: #4b5563; margin-top: 4px; word-break: break-word;">${h.detalle}</div>${h.nota ? `<div style="font-size: 11px; color: #d97706; margin-top: 2px; word-break: break-word;">Nota: ${h.nota}</div>` : ''}
                         <div style="font-size: 11px; color: var(--gris-texto); margin-top: 6px;">Total abonado: <b>$${h.total.toLocaleString()}</b></div>
                     </div>
                 `).join('') : '<p style="color:var(--gris-texto); font-size:13px; text-align:center; padding: 40px 0;">Aún no hay registros en el historial.</p>'}
@@ -221,7 +221,6 @@ function actualizarVistaAdmin() {
                     <option value="cafeteria">Cafetería</option>
                     <option value="bebidas">Bebidas</option>
                 </select>
-                <!-- Input agregado para pegar el link de Drive -->
                 <input type="text" id="nuevo-prod-imagen" class="app-input" placeholder="Link de Google Drive de la imagen (opcional)">
                 <button type="submit" style="background: var(--naranja-rapidin); color: var(--azul-rapidin); border: none; padding: 10px; border-radius: 12px; font-weight: 800; font-size: 12px; cursor: pointer; box-shadow: 0 4px 12px rgba(230,126,34,0.2);">Guardar Producto</button>
             </form>
@@ -232,8 +231,8 @@ function actualizarVistaAdmin() {
                     return `
                         <div class="app-card" style="display: flex; flex-direction: column; gap: 8px; border-left: 5px solid ${sinStock ? '#e74c3c' : '#27ae60'};">
                             <div style="display: flex; justify-content: space-between; gap: 8px;">
-                                <input type="text" id="nombre-prod-${idx}" class="app-input" value="${item.nombre}" style="font-weight: 700; color: var(--azul-rapidin); padding: 8px 12px; flex-grow: 1;">
-                                <input type="number" id="precio-prod-${idx}" class="app-input" value="${item.precio || 0}" style="font-weight: 600; color: var(--naranja-hover); width: 85px; padding: 8px; text-align: center;">
+                                <input type="text" id="nombre-prod-${idx}" class="app-input" value="${item.nombre}" style="font-weight: 700; color: var(--azul-rapidin); padding: 8px 12px; flex-grow: 1; min-width: 0;">
+                                <input type="number" id="precio-prod-${idx}" class="app-input" value="${item.precio || 0}" style="font-weight: 600; color: var(--naranja-hover); width: 85px; padding: 8px; text-align: center; flex-shrink: 0;">
                             </div>
                             <div style="display: flex; justify-content: space-between; align-items: center;">
                                 <button onclick="guardarCambiosProducto(${idx})" style="background: var(--azul-rapidin); color: #fff; border: none; padding: 6px 12px; border-radius: 10px; font-weight: 600; font-size: 11px; cursor: pointer;">Guardar</button>
