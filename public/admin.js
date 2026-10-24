@@ -162,8 +162,8 @@ function actualizarVistaAdmin() {
 
     if (pestanaAdminActiva === 'pedidos') {
         contenedor.innerHTML = `
-            <div style="font-weight: 700; color: var(--azul-rapidin); font-size: 14px; margin-bottom: 2px;">Órdenes Activas en Cocina:</div>
-            <div style="display: flex; flex-direction: column; gap: 12px; max-height: 520px; overflow-y: auto;">
+            <div style="font-weight: 700; color: var(--azul-rapidin); font-size: 14px; margin-bottom: 2px; flex-shrink: 0;">Órdenes Activas en Cocina:</div>
+            <div style="display: flex; flex-direction: column; gap: 12px; overflow-y: auto; flex-grow: 1; min-height: 0; padding-bottom: 10px;">
                 ${pedidosActuales.length > 0 ? pedidosActuales.map((p, idx) => {
                     let esPreparacion = p.estado === "En preparación";
                     let btnTexto = esPreparacion ? "Marcar Listo para Retirar" : "Marcar Entregado";
@@ -171,7 +171,7 @@ function actualizarVistaAdmin() {
                     let notaHtml = p.nota ? `<div style="font-size: 11px; color: #d97706; margin-top: 4px; font-weight: 600; word-break: break-word;">Nota: ${p.nota}</div>` : '';
 
                     return `
-                        <div class="app-card" style="display: flex; justify-content: space-between; align-items: center; border-left: 6px solid var(--naranja-rapidin); gap: 12px;">
+                        <div class="app-card" style="display: flex; justify-content: space-between; align-items: center; border-left: 6px solid var(--naranja-rapidin); gap: 12px; flex-shrink: 0;">
                             <div style="flex: 1; min-width: 0;">
                                 <div style="font-weight: 800; font-size: 14px; color: var(--azul-rapidin);">Orden #${p.codigoTicket}</div>
                                 <div style="font-size: 12px; color: #4b5563; margin: 4px 0; word-break: break-word;">${p.detalle}</div>${notaHtml}
@@ -187,10 +187,10 @@ function actualizarVistaAdmin() {
         `;
     } else if (pestanaAdminActiva === 'historial') {
         contenedor.innerHTML = `
-            <div style="font-weight: 700; color: var(--azul-rapidin); font-size: 14px; margin-bottom: 2px;">Historial de Órdenes Entregadas:</div>
-            <div style="display: flex; flex-direction: column; gap: 12px; max-height: 520px; overflow-y: auto;">
+            <div style="font-weight: 700; color: var(--azul-rapidin); font-size: 14px; margin-bottom: 2px; flex-shrink: 0;">Historial de Órdenes Entregadas:</div>
+            <div style="display: flex; flex-direction: column; gap: 12px; overflow-y: auto; flex-grow: 1; min-height: 0; padding-bottom: 10px;">
                 ${historialActual.length > 0 ? historialActual.map(h => `
-                    <div class="app-card" style="border-left: 6px solid #27ae60;">
+                    <div class="app-card" style="border-left: 6px solid #27ae60; flex-shrink: 0;">
                         <div style="display:flex; justify-content:space-between; font-weight:700; font-size:13px;">
                             <span style="color:var(--azul-rapidin);">Orden #${h.codigoTicket}</span>
                             <span style="color:#27ae60;">Entregado</span>
@@ -203,12 +203,12 @@ function actualizarVistaAdmin() {
         `;
     } else if (pestanaAdminActiva === 'stock') {
         contenedor.innerHTML = `
-            <div style="font-weight: 700; color: var(--azul-rapidin); font-size: 14px; margin-bottom: 2px; display: flex; justify-content: space-between; align-items: center;">
+            <div style="font-weight: 700; color: var(--azul-rapidin); font-size: 14px; margin-bottom: 2px; display: flex; justify-content: space-between; align-items: center; flex-shrink: 0;">
                 <span>Control y Gestión de Stock:</span>
                 ${productosAgotados > 0 ? `<span style="font-size: 11px; background: #fee2e2; color: #dc2626; padding: 2px 8px; border-radius: 6px; font-weight: 700;">¡Hay ${productosAgotados} sin stock!</span>` : ''}
             </div>
 
-            <form onsubmit="agregarNuevoProductoDesdeAdmin(event)" class="app-card" style="background: rgba(255,255,255,0.7); border: 1.5px dashed rgba(10,37,51,0.2); display: flex; flex-direction: column; gap: 8px; margin-bottom: 4px;">
+            <form onsubmit="agregarNuevoProductoDesdeAdmin(event)" class="app-card" style="background: rgba(255,255,255,0.7); border: 1.5px dashed rgba(10,37,51,0.2); display: flex; flex-direction: column; gap: 8px; margin-bottom: 4px; flex-shrink: 0;">
                 <span style="font-size: 11px; font-weight: 700; color: var(--azul-rapidin);">➕ Agregar Nuevo Producto:</span>
                 <input type="text" id="nuevo-prod-nombre" class="app-input" placeholder="Nombre del producto" required>
                 <div style="display: flex; gap: 8px;">
@@ -225,11 +225,11 @@ function actualizarVistaAdmin() {
                 <button type="submit" style="background: var(--naranja-rapidin); color: var(--azul-rapidin); border: none; padding: 10px; border-radius: 12px; font-weight: 800; font-size: 12px; cursor: pointer; box-shadow: 0 4px 12px rgba(230,126,34,0.2);">Guardar Producto</button>
             </form>
 
-            <div style="display: flex; flex-direction: column; gap: 10px; max-height: 320px; overflow-y: auto;">
+            <div style="display: flex; flex-direction: column; gap: 10px; overflow-y: auto; flex-grow: 1; min-height: 0; padding-bottom: 10px;">
                 ${stockActual.map((item, idx) => {
                     let sinStock = item.stock <= 0;
                     return `
-                        <div class="app-card" style="display: flex; flex-direction: column; gap: 8px; border-left: 5px solid ${sinStock ? '#e74c3c' : '#27ae60'};">
+                        <div class="app-card" style="display: flex; flex-direction: column; gap: 8px; border-left: 5px solid ${sinStock ? '#e74c3c' : '#27ae60'}; flex-shrink: 0;">
                             <div style="display: flex; justify-content: space-between; gap: 8px;">
                                 <input type="text" id="nombre-prod-${idx}" class="app-input" value="${item.nombre}" style="font-weight: 700; color: var(--azul-rapidin); padding: 8px 12px; flex-grow: 1; min-width: 0;">
                                 <input type="number" id="precio-prod-${idx}" class="app-input" value="${item.precio || 0}" style="font-weight: 600; color: var(--naranja-hover); width: 85px; padding: 8px; text-align: center; flex-shrink: 0;">
