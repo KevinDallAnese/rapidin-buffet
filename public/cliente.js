@@ -563,3 +563,24 @@ function cerrarModalProducto() {
         modalOverlay.style.display = 'none';
     }
 }
+// Agregá este event listener para cerrar el modal al tocar fuera de él
+document.addEventListener('DOMContentLoaded', () => {
+    let modalProducto = document.getElementById('modal-producto');
+    if (modalProducto) {
+        modalProducto.addEventListener('click', (e) => {
+            // Si el click ocurre exactamente en el fondo oscuro y no dentro del contenido blanco
+            if (e.target === modalProducto) {
+                cerrarModalProducto();
+            }
+        });
+    }
+
+    let modalComprobante = document.getElementById('modal-comprobante');
+    if (modalComprobante) {
+        modalComprobante.addEventListener('click', (e) => {
+            if (e.target === modalComprobante) {
+                cerrarModal();
+            }
+        });
+    }
+});
