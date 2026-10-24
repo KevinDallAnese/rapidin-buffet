@@ -11,7 +11,6 @@ let stockBuffet = [];
 let pedidosBuffetServidor = [];
 
 socket.on('actualizar-estado', (data) => {
-    // Recuperar carrito guardado previamente en el navegador
     let carritoGuardado = JSON.parse(localStorage.getItem('rapidin_carrito')) || {};
 
     if (data && Array.isArray(data.stock)) {
@@ -24,7 +23,7 @@ socket.on('actualizar-estado', (data) => {
                 stock: Number(item.stock) || 0,
                 categoria: (item.categoria || 'platos').toLowerCase(),
                 imagen: item.imagen || "https://images.unsplash.com/photo-1547592166-23ac45744acd?w=150&auto=format&fit=crop&q=80",
-                qty: Math.min(qtyGuardada, item.stock) // Evita superar el stock actual si cambió
+                qty: Math.min(qtyGuardada, item.stock)
             };
         });
     }
@@ -158,13 +157,13 @@ function renderizarMenuPrincipal() {
 
                 return `
                     <div class="app-card" style="background: linear-gradient(135deg, var(--azul-rapidin) 0%, var(--azul-claro) 100%); color: var(--blanco); margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; gap: 12px; opacity: ${sinStock ? '0.6' : '1'};">
-                        <img src="${item.imagen}" alt="${item.nombre}" style="width: 55px; height: 55px; border-radius: 14px; object-fit: cover; border: 2px solid rgba(255,255,255,0.2);">
-                        <div style="flex-grow: 1;">
+                        <img src="${item.imagen}" alt="${item.nombre}" style="width: 55px; height: 55px; border-radius: 14px; object-fit: cover; border: 2px solid rgba(255,255,255,0.2); flex-shrink: 0;">
+                        <div style="flex-grow: 1; min-width: 0;">
                             <span style="font-size: 8px; text-transform: uppercase; color: var(--naranja-rapidin); font-weight:800; letter-spacing: 1px;">Destacado del día</span>
-                            <h3 style="font-family: 'Rhodesia', serif; font-size: 14px; color: var(--naranja-rapidin); line-height: 1.1; margin-top: 2px;">${item.nombre}</h3>
+                            <h3 style="font-family: 'Rhodesia', serif; font-size: 14px; color: var(--naranja-rapidin); line-height: 1.1; margin-top: 2px; word-break: break-word;">${item.nombre}</h3>
                             <p style="font-size: 11px; opacity: 0.85; margin-top: 2px;">$${item.precio.toLocaleString()} ${sinStock ? '• <b style="color:#ef4444;">AGOTADO</b>' : ''}</p>
                         </div>
-                        <div style="display: flex; align-items: center; gap: 6px;">
+                        <div style="display: flex; align-items: center; gap: 6px; flex-shrink: 0;">
                             <button onclick="quitarDelCarrito(${item.id})" style="background: rgba(0,0,0,0.3); border: none; width: 26px; height: 26px; border-radius: 8px; font-weight: bold; color: #fff; cursor: pointer;">-</button>
                             <span style="color: #fff; font-weight: bold; font-size: 13px; min-width: 12px; text-align: center;">${item.qty}</span>
                             ${sinStock ? '' : `<button onclick="agregarAlCarrito(${item.id})" style="background: var(--naranja-rapidin); border: none; width: 26px; height: 26px; border-radius: 8px; font-weight: bold; color: var(--azul-rapidin); cursor: pointer;">+</button>`}
@@ -201,12 +200,12 @@ function renderizarMenuPrincipal() {
 
                 return `
                     <div class="app-card" style="display: flex; justify-content: space-between; align-items: center; gap: 12px; opacity: ${sinStock ? '0.65' : '1'};">
-                        <img src="${item.imagen}" alt="${item.nombre}" style="width: 48px; height: 48px; border-radius: 12px; object-fit: cover;">
-                        <div style="flex-grow: 1;">
-                            <div style="font-size: 13px; font-weight: 700; color: var(--azul-rapidin);">${item.nombre}</div>
+                        <img src="${item.imagen}" alt="${item.nombre}" style="width: 48px; height: 48px; border-radius: 12px; object-fit: cover; flex-shrink: 0;">
+                        <div style="flex-grow: 1; min-width: 0;">
+                            <div style="font-size: 13px; font-weight: 700; color: var(--azul-rapidin); word-break: break-word;">${item.nombre}</div>
                             <div style="font-size: 11px; color: var(--gris-texto);">$${item.precio.toLocaleString()} ${sinStock ? '• <b style="color:#ef4444;">AGOTADO</b>' : `• Stock: ${item.stock}`}</div>
                         </div>
-                        <div style="display: flex; align-items: center; gap: 8px;">
+                        <div style="display: flex; align-items: center; gap: 8px; flex-shrink: 0;">
                             <button onclick="quitarDelCarrito(${item.id})" style="background: #e5e7eb; border: none; width: 26px; height: 26px; border-radius: 8px; font-weight: bold; cursor: pointer;">-</button>
                             <span style="font-size: 13px; font-weight: 700; min-width: 12px; text-align: center;">${item.qty}</span>
                             ${sinStock ? '' : `<button onclick="agregarAlCarrito(${item.id})" style="background: var(--naranja-rapidin); border: none; width: 26px; height: 26px; border-radius: 8px; font-weight: bold; cursor: pointer; color: var(--azul-rapidin);">+</button>`}
@@ -223,7 +222,7 @@ function renderizarMenuPrincipal() {
     if (contenedorBoton) {
         if (cantCarrito() > 0) {
             contenedorBoton.innerHTML = `
-                <div style="position: absolute; bottom: 70px; left: 16px; right: 16px; z-index: 10;">
+                <div style="position: absolute; bottom: 82px; left: 16px; right: 16px; z-index: 10;">
                     <div onclick="mostrarCliente(3)" style="background: var(--azul-rapidin); color: #fff; padding: 14px 18px; border-radius: 20px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; font-weight: 700; font-size: 13px; box-shadow: 0 10px 25px rgba(10,37,51,0.25);">
                         <span>Ver Pedido (${cantCarrito()} ítems)</span>
                         <span>$${totalCarrito().toLocaleString()} ➔</span>
@@ -286,8 +285,8 @@ function mostrarCliente(id, registrarHistorial = true) {
 
         container.innerHTML = `
             <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 5px;">
-                <img src="/icon-192.png" alt="Rapidin Logo" style="height: 34px; width: auto; object-fit: contain;">
-                <span style="font-size: 11px; background: rgba(10,37,51,0.08); padding: 4px 10px; border-radius: 20px; font-weight: 700;">UNM Moreno</span>
+                <img src="/rapidin.png" alt="Rapidin Logo" style="height: 34px; width: auto; object-fit: contain;">
+                <img src="/unm.png" alt="Logo UNM" style="height: 34px; width: auto; object-fit: contain;">
             </div>
 
             <div style="margin: 4px 0;">
@@ -343,14 +342,14 @@ function mostrarCliente(id, registrarHistorial = true) {
                     let colorEstadoBg = esListo ? "#d1fae5" : "#fef3c7";
                     let colorEstadoTxt = esListo ? "#065f46" : "#b45309";
                     let mostrarEspera = ticket.estado === "En preparación";
-                    let notaHtml = ticket.nota ? `<div style="font-size: 11px; color: #d97706; margin-top: 2px;">Nota: ${ticket.nota}</div>` : '';
+                    let notaHtml = ticket.nota ? `<div style="font-size: 11px; color: #d97706; margin-top: 2px; word-break: break-word;">Nota: ${ticket.nota}</div>` : '';
 
                     return `
                         <div class="app-card" style="border-left: 6px solid var(--naranja-rapidin);">
                             <div style="display:flex; justify-content:space-between; align-items:center;">
                                 <span style="font-weight: 800; font-size: 13px; color: var(--azul-rapidin);">Orden #${ticket.idNro}</span> <span style="font-size: 11px; font-weight: bold; color: var(--naranja-rapidin);">$${ticket.total.toLocaleString()}</span>
                             </div>
-                            <p style="font-size: 12px; color: #4b5563; margin: 6px 0;">${ticket.detalleText}</p>${notaHtml}
+                            <p style="font-size: 12px; color: #4b5563; margin: 6px 0; word-break: break-word;">${ticket.detalleText}</p>${notaHtml}
                             <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 8px;">
                                 <div style="background: ${colorEstadoBg}; color:${colorEstadoTxt}; padding: 4px 10px; border-radius: 8px; font-size: 11px; font-weight: 700;">${ticket.estado}</div>${mostrarEspera ? `<div style="font-size: 11px; color: var(--gris-texto);">Espera aprox: <b>${tiempoEsperaServidor} min</b></div>` : ''}
                             </div>
@@ -378,7 +377,7 @@ function mostrarCliente(id, registrarHistorial = true) {
                             <span style="color:var(--azul-rapidin);">Orden #${ord.idNro}</span>
                             <span style="color:#27ae60;">${ord.estado}</span>
                         </div>
-                        <p style="font-size:12px; color:#4b5563; margin-top:4px;">${ord.detalleText}</p>${ord.nota ? `<div style="font-size: 11px; color: #d97706; margin-top: 2px;">Nota: ${ord.nota}</div>` : ''}
+                        <p style="font-size:12px; color:#4b5563; margin-top:4px; word-break: break-word;">${ord.detalleText}</p>${ord.nota ? `<div style="font-size: 11px; color: #d97706; margin-top: 2px; word-break: break-word;">Nota: ${ord.nota}</div>` : ''}
                         <div style="font-size:11px; color:var(--gris-texto); margin-top:6px;">Total abonado: <b>$${ord.total.toLocaleString()}</b></div>
                     </div>
                 `).join('') : '<p style="text-align:center; color:var(--gris-texto); margin-top:60px; font-size:13px;">Aún no registra historial de pedidos finalizados.</p>'}
@@ -390,14 +389,15 @@ function mostrarCliente(id, registrarHistorial = true) {
         container.innerHTML = `
             <div style="font-weight: 700; color: var(--azul-rapidin); margin-top: 5px; font-size: 15px;">Revisá y modificá tu pedido:</div>
             
-            <div class="app-card" style="max-height: 180px; overflow-y: auto;">
+            <div class="app-card" style="max-height: 160px; overflow-y: auto;">
                 ${itemsEnCarrito.length > 0 ? itemsEnCarrito.map(i => {
                     return `
                         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; border-bottom: 1px solid rgba(10,37,51,0.05); padding-bottom: 6px; gap: 8px;">
-                            <div style="flex-grow: 1;">
-                                <div style="font-weight: 700; font-size: 12px; color: var(--azul-rapidin);">${i.nombre}</div> <div style="font-size: 11px; color: var(--gris-texto);">$${(i.precio * i.qty).toLocaleString()}</div>
+                            <div style="flex-grow: 1; min-width: 0;">
+                                <div style="font-weight: 700; font-size: 12px; color: var(--azul-rapidin); word-break: break-word;">${i.nombre}</div>
+                                <div style="font-size: 11px; color: var(--gris-texto);">$${(i.precio * i.qty).toLocaleString()}</div>
                             </div>
-                            <div style="display: flex; align-items: center; gap: 6px;">
+                            <div style="display: flex; align-items: center; gap: 6px; flex-shrink: 0;">
                                 <button onclick="quitarDelCarrito(${i.id})" style="background: #e5e7eb; border: none; width: 24px; height: 24px; border-radius: 8px; font-weight: bold; cursor: pointer;">-</button>
                                 <span style="font-size: 12px; font-weight: bold; min-width: 12px; text-align: center;">${i.qty}</span>
                                 <button onclick="agregarAlCarrito(${i.id})" style="background: var(--naranja-rapidin); border: none; width: 24px; height: 24px; border-radius: 8px; font-weight: bold; color: var(--azul-rapidin); cursor: pointer;">+</button>
@@ -408,37 +408,36 @@ function mostrarCliente(id, registrarHistorial = true) {
                 
                 ${itemsEnCarrito.length > 0 ? `
                     <div style="font-weight: 700; margin-top: 10px; font-size: 13.5px; display: flex; justify-content: space-between; border-top: 2px solid rgba(10,37,51,0.08); padding-top: 8px;">
-                        <span>Total:</span>
+                        <span>Total a Pagar:</span>
                         <span style="color: var(--naranja-hover);">$${totalCarrito().toLocaleString()}</span>
                     </div>
                 ` : ''}
             </div>
 
             ${itemsEnCarrito.length > 0 ? `
-                <div style="margin-top: 4px;">
+                <div style="margin-top: 2px;">
                     <label style="font-size: 11px; font-weight: 700; color: var(--azul-rapidin); display: block; margin-bottom: 4px;">Aclaraciones o notas (opcional):</label>
                     <input type="text" id="input-nota-pedido" class="app-input" placeholder="Ej: Sin cebolla, pan tostado...">
                 </div>
 
-                <div style="font-weight: 700; color: var(--azul-rapidin); font-size: 13px; margin-top: 4px;">Seleccioná medio de pago:</div>
+                <div style="font-weight: 700; color: var(--azul-rapidin); font-size: 13px; margin-top: 2px;">Seleccioná medio de pago:</div>
                 
-                <div class="pay-option" onclick="procesarPagoYGenerarCodigo()">
-                    <div style="width: 32px; height: 32px; background: rgba(230,126,34,0.12); border-radius: 10px; display: flex; align-items: center; justify-content: center;">
-                        <svg style="width:16px; height:16px; fill:var(--naranja-rapidin);" viewBox="0 0 24 24"><path d="M17 1.01L7 1c-1.1 0-2 .9-2 2v18c0 1.1.9 2 2 2h10c1.1 0 2-.9 2-2V3c0-1.1-.9-1.99-2-1.99zM17 19H7V5h10v14z"/></svg>
+                <div class="app-card" style="background: #fdfbf7; border: 1.5px solid rgba(230,126,34,0.3); padding: 12px;">
+                    <div style="font-weight: 800; font-size: 12px; color: var(--azul-rapidin); margin-bottom: 4px;">Datos para Transferencia / MP:</div>
+                    <div style="font-size: 11.5px; color: #334155; line-height: 1.4;">
+                        Alias: <b style="color: var(--naranja-hover); user-select: all;">buffet.unm.oficial</b><br>
+                        Titular: Buffet UNM Moreno<br>
+                        <span style="font-size: 10.5px; opacity: 0.8;">(Transferí el monto exacto y presiona confirmar)</span>
                     </div>
-                    <div style="font-size: 13px;">Mercado Pago (QR)</div>
                 </div>
-                <div class="pay-option" onclick="procesarPagoYGenerarCodigo()">
-                    <div style="width: 32px; height: 32px; background: rgba(230,126,34,0.12); border-radius: 10px; display: flex; align-items: center; justify-content: center;">
-                        <svg style="width:16px; height:16px; fill:var(--naranja-rapidin);" viewBox="0 0 24 24"><path d="M4 10h3v7H4zM10.5 10h3v7h-3zM2 19h20v3H2zM17 10h3v7h-3zM12 1L1 6v2h22V6z"/></svg>
-                    </div>
-                    <div style="font-size: 13px;">Transferencia Bancaria (Alias UNM)</div>
-                </div>
-                <div class="pay-option" onclick="procesarPagoYGenerarCodigo()">
-                    <div style="width: 32px; height: 32px; background: rgba(230,126,34,0.12); border-radius: 10px; display: flex; align-items: center; justify-content: center;">
-                        <svg style="width:16px; height:16px; fill:var(--naranja-rapidin);" viewBox="0 0 24 24"><path d="M21 18v1c0 1.1-.9 2-2 2H5c-1.11 0-2-.9-2-2V5c0-1.1.89-2 2-2h14c1.1 0 2 .9 2 2v1h-9c-1.11 0-2 .9-2 2v8c0 1.1.89 2 2 2zm-9-2h10V8H12zm4-2.5c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5z"/></svg>
-                    </div>
-                    <div style="font-size: 13px;">Efectivo en Ventanilla Flash</div>
+
+                <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 4px;">
+                    <button onclick="procesarPagoYGenerarCodigo('Transferencia / Mercado Pago')" style="background: var(--naranja-rapidin); color: var(--azul-rapidin); border: none; padding: 12px; border-radius: 14px; font-weight: 800; font-size: 13px; cursor: pointer; box-shadow: 0 4px 12px rgba(230,126,34,0.2);">
+                        Ya transferí / Pagar con Alias
+                    </button>
+                    <button onclick="procesarPagoYGenerarCodigo('Efectivo en Ventanilla')" style="background: var(--azul-rapidin); color: #fff; border: none; padding: 12px; border-radius: 14px; font-weight: 700; font-size: 13px; cursor: pointer;">
+                        Pagar en Efectivo en Ventanilla
+                    </button>
                 </div>
             ` : ''}
         `;
@@ -453,7 +452,7 @@ window.addEventListener('popstate', (event) => {
     }
 });
 
-function procesarPagoYGenerarCodigo() {
+function procesarPagoYGenerarCodigo(metodoPago) {
     if(cantCarrito() === 0) {
         mostrarToast("Por favor, seleccione al menos un producto.", "error");
         return;
@@ -470,7 +469,7 @@ function procesarPagoYGenerarCodigo() {
         idNro: codigoAleatorio,
         estado: "En preparación",
         detalleText: detalleStr,
-        nota: notaTexto,
+        nota: `${notaTexto} [Pago: ${metodoPago}]`,
         total: totalCarrito()
     };
 
@@ -481,16 +480,16 @@ function procesarPagoYGenerarCodigo() {
         orden: {
             codigoTicket: codigoAleatorio,
             detalle: detalleStr,
-            nota: notaTexto,
+            nota: `${notaTexto} [Pago: ${metodoPago}]`,
             total: totalCarrito(),
             estado: "En preparación"
         }
     });
 
-    mostrarToast("Pago acreditado correctamente. Orden generada.", "success");
+    mostrarToast(`Pedido #${codigoAleatorio} generado con éxito.`, "success");
 
     stockBuffet.forEach(i => i.qty = 0);
-    localStorage.removeItem('rapidin_carrito'); // Limpiar storage al concretar la compra
+    localStorage.removeItem('rapidin_carrito');
     mostrarCliente(2);
 }
 
