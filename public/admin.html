@@ -11,19 +11,19 @@
     <div class="phone-frame" style="margin-top: 20px;">
         <div class="phone-header-notch"></div>
 
-        <div id="admin-screen" class="screen-content" style="padding-top: 15px;">
+        <div id="admin-screen" class="screen-content" style="padding-top: 15px; flex-grow: 1; overflow-y: auto;">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
                 <span style="font-weight: 800; font-size: 20px; font-family: 'Rhodesia'; color: var(--azul-rapidin);">Panel Cocina</span>
                 <span style="font-size: 11px; background: var(--naranja-rapidin); color: var(--azul-rapidin); padding: 4px 10px; border-radius: 20px; font-weight: 700;">Admin Buffet</span>
             </div>
 
-            <div id="admin-contenido" style="display: flex; flex-direction: column; gap: 12px; flex-grow: 1;">
+            <div id="admin-contenido" style="display: flex; flex-direction: column; gap: 12px;">
                 <!-- Dinámico -->
             </div>
         </div>
 
-        <!-- NAVEGACIÓN ADMIN -->
-        <nav class="bottom-nav" id="admin-nav">
+        <!-- NAVEGACIÓN ADMIN FIJA -->
+        <nav class="bottom-nav" id="admin-nav" style="position: sticky; bottom: 0; left: 0; width: 100%;">
             <button class="nav-icon active" onclick="mostrarBuffet('pedidos')" style="position: relative;" id="nav-pedidos-btn">
                 <svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2m-5 14H7v-2h7zm3-4H7v-2h10zm0-4H7V7h10z"/></svg>
                 Órdenes
