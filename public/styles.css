@@ -74,6 +74,7 @@ body {
     align-self: center;
     margin-bottom: 4px;
     z-index: 10;
+    flex-shrink: 0;
 }
 
 @media screen and (max-width: 480px) {
@@ -98,7 +99,7 @@ body {
 
 .screen-content {
     flex-grow: 1;
-    padding: 14px 20px 24px 20px;
+    padding: 14px 20px 85px 20px; /* Padding inferior de seguridad para evitar solapamientos con la navbar */
     overflow-y: auto;
     display: flex;
     flex-direction: column;
@@ -114,7 +115,6 @@ body {
     border-radius: 4px;
 }
 
-/* Clases estéticas globales para reemplazar estilos en línea planos */
 .app-card {
     background-color: var(--fondo-tarjeta);
     border-radius: 22px;
@@ -211,6 +211,8 @@ body {
     align-items: center;
     border-top: 1px solid rgba(255,255,255,0.06);
     width: 100%;
+    flex-shrink: 0;
+    z-index: 50;
 }
 
 .nav-icon {
