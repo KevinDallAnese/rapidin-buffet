@@ -19,6 +19,7 @@ socket.on('actualizar-estado', (data) => {
             return {
                 id: item.id,
                 nombre: item.nombre || 'Producto sin nombre',
+                descripcion: item.descripcion || '',
                 precio: Number(item.precio) || 0,
                 stock: Number(item.stock) || 0,
                 categoria: (item.categoria || 'platos').toLowerCase(),
@@ -157,8 +158,8 @@ function renderizarMenuPrincipal() {
 
                 return `
                     <div class="app-card" style="background: linear-gradient(135deg, var(--azul-rapidin) 0%, var(--azul-claro) 100%); color: var(--blanco); margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; gap: 12px; opacity: ${sinStock ? '0.6' : '1'};">
-                        <img src="${item.imagen}" alt="${item.nombre}" style="width: 55px; height: 55px; border-radius: 14px; object-fit: cover; border: 2px solid rgba(255,255,255,0.2); flex-shrink: 0;">
-                        <div style="flex-grow: 1; min-width: 0;">
+                        <img src="${item.imagen}" alt="${item.nombre}" referrerpolicy="no-referrer" onclick="abrirModalProducto(${item.id})" style="width: 55px; height: 55px; border-radius: 14px; object-fit: cover; border: 2px solid rgba(255,255,255,0.2); flex-shrink: 0; cursor: pointer;">
+                        <div style="flex-grow: 1; min-width: 0; cursor: pointer;" onclick="abrirModalProducto(${item.id})">
                             <span style="font-size: 8px; text-transform: uppercase; color: var(--naranja-rapidin); font-weight:800; letter-spacing: 1px;">Destacado del día</span>
                             <h3 style="font-family: 'Rhodesia', serif; font-size: 14px; color: var(--naranja-rapidin); line-height: 1.1; margin-top: 2px; word-break: break-word;">${item.nombre}</h3>
                             <p style="font-size: 11px; opacity: 0.85; margin-top: 2px;">$${item.precio.toLocaleString()} ${sinStock ? '• <b style="color:#ef4444;">AGOTADO</b>' : ''}</p>
@@ -200,8 +201,8 @@ function renderizarMenuPrincipal() {
 
                 return `
                     <div class="app-card" style="display: flex; justify-content: space-between; align-items: center; gap: 12px; opacity: ${sinStock ? '0.65' : '1'};">
-                        <img src="${item.imagen}" alt="${item.nombre}" style="width: 48px; height: 48px; border-radius: 12px; object-fit: cover; flex-shrink: 0;">
-                        <div style="flex-grow: 1; min-width: 0;">
+                        <img src="${item.imagen}" alt="${item.nombre}" referrerpolicy="no-referrer" onclick="abrirModalProducto(${item.id})" style="width: 48px; height: 48px; border-radius: 12px; object-fit: cover; flex-shrink: 0; cursor: pointer;">
+                        <div style="flex-grow: 1; min-width: 0; cursor: pointer;" onclick="abrirModalProducto(${item.id})">
                             <div style="font-size: 13px; font-weight: 700; color: var(--azul-rapidin); word-break: break-word;">${item.nombre}</div>
                             <div style="font-size: 11px; color: var(--gris-texto);">$${item.precio.toLocaleString()} ${sinStock ? '• <b style="color:#ef4444;">AGOTADO</b>' : `• Stock: ${item.stock}`}</div>
                         </div>
@@ -513,4 +514,52 @@ function cerrarModal() {
 
 function reiniciarPedido() {
     mostrarCliente(1);
+}
+
+// FUNCIONES PARA EL POPUP / MODAL DE PRODUCTOS
+function abrirModalProducto(idProducto) {
+    let producto = stockBuffet.find(s => s.id === idProducto);
+    if (!producto) return;
+
+    let modalImg = document.getElementById('modal-prod-imagen');
+    let modalCat = document.getElementById('modal-prod-categoria');
+    let modalNom = document.getElementById('modal-prod-nombre');
+    let modalDesc = document.getElementById('modal-prod-descripcion');
+    let modalPrecio = document.getElementById('modal-prod-precio');
+    let modalBtn = document.getElementById('modal-btn-agregar');
+    let modalOverlay = document.getElementById('modal-producto');
+
+    if (modalImg) modalImg.src = producto.imagen;
+    if (modalCat) modalCat.innerText = producto.categoria;
+    if (modalNom) modalNom.innerText = producto.nombre;
+    if (modalDesc) modalDesc.innerText = producto.descripcion || "Producto fresco preparado en el día para la comunidad de la UNM.";
+    if (modalPrecio) modalPrecio.innerText = `$${producto.precio.toLocaleString()}`;
+    
+    if (modalBtn) {
+        if (producto.stock <= 0) {
+            modalBtn.innerText = "Agotado Temporalmente";
+            modalBtn.style.background = "#e5e7eb";
+            modalBtn.style.color = "#9ca3af";
+            modalBtn.onclick = null;
+        } else {
+            modalBtn.innerText = "Agregar al Pedido ➔";
+            modalBtn.style.background = "var(--naranja-rapidin)";
+            modalBtn.style.color = "var(--azul-rapidin)";
+            modalBtn.onclick = function() {
+                agregarAlCarrito(producto.id);
+                cerrarModalProducto();
+            };
+        }
+    }
+
+    if (modalOverlay) {
+        modalOverlay.style.display = 'flex';
+    }
+}
+
+function cerrarModalProducto() {
+    let modalOverlay = document.getElementById('modal-producto');
+    if (modalOverlay) {
+        modalOverlay.style.display = 'none';
+    }
 }
