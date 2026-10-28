@@ -37,6 +37,19 @@ body {
     margin: 0;
 }
 
+/* Regla base unificada para todos los títulos y textos */
+h1, h2, h3, h4, h5, h6, p, span, a, button, input {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+}
+
+.app-title {
+    font-size: 17px;
+    font-weight: 800;
+    color: var(--azul-rapidin);
+    margin-top: 4px;
+    margin-bottom: 10px;
+}
+
 .minimal-spinner {
     width: 32px;
     height: 32px;
@@ -50,7 +63,6 @@ body {
     to { transform: rotate(360deg); }
 }
 
-/* Marco de celular simulado con bordes refinados */
 .phone-frame {
     width: 390px;
     height: 800px;
@@ -99,7 +111,7 @@ body {
 
 .screen-content {
     flex-grow: 1;
-    min-height: 0; /* <--- CORRECCIÓN CLAVE: Evita que el contenido desborde el flex container */
+    min-height: 0;
     padding: 14px 20px 20px 20px; 
     overflow-y: auto;
     display: flex;
@@ -128,6 +140,49 @@ body {
 .app-card:hover {
     transform: translateY(-1px);
     box-shadow: 0 16px 30px -8px rgba(10, 37, 51, 0.1);
+}
+
+/* NUEVAS CLASES PARA CATEGORÍAS CON HOVER Y ESTADO ACTIVO */
+/* Estado base de la categoría */
+.categoria-card {
+    background-color: var(--fondo-tarjeta);
+    color: var(--azul-rapidin);
+    padding: 14px;
+    border-radius: 22px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    cursor: pointer;
+    border: 1.5px solid rgba(10, 37, 51, 0.06);
+    box-shadow: var(--sombra-suave);
+    transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.categoria-card svg {
+    width: 26px;
+    height: 26px;
+    fill: var(--azul-rapidin);
+    transition: fill 0.25s ease;
+}
+
+.categoria-card:hover {
+    border-color: var(--naranja-rapidin);
+    transform: translateY(-2px);
+    box-shadow: 0 12px 25px -5px rgba(230, 126, 34, 0.15);
+}
+
+/* Estado activo (gana especificidad al estar encadenado) */
+.categoria-card.active {
+    background-color: var(--azul-rapidin);
+    color: var(--blanco);
+    border-color: var(--azul-rapidin);
+    box-shadow: 0 12px 25px -5px rgba(10, 37, 51, 0.25);
+}
+
+.categoria-card.active svg {
+    fill: var(--naranja-rapidin);
 }
 
 .app-input {
