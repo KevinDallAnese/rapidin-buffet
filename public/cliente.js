@@ -161,7 +161,7 @@ function renderizarMenuPrincipal() {
                         <img src="${item.imagen}" alt="${item.nombre}" referrerpolicy="no-referrer" onclick="abrirModalProducto(${item.id})" style="width: 55px; height: 55px; border-radius: 14px; object-fit: cover; border: 2px solid rgba(255,255,255,0.2); flex-shrink: 0; cursor: pointer;">
                         <div style="flex-grow: 1; min-width: 0; cursor: pointer;" onclick="abrirModalProducto(${item.id})">
                             <span style="font-size: 8px; text-transform: uppercase; color: var(--naranja-rapidin); font-weight:800; letter-spacing: 1px;">Destacado del día</span>
-                            <h3 style="font-family: 'Rhodesia', serif; font-size: 14px; color: var(--naranja-rapidin); line-height: 1.1; margin-top: 2px; word-break: break-word;">${item.nombre}</h3>
+                            <h3 style="font-size: 14px; font-weight: 700; color: var(--naranja-rapidin); line-height: 1.1; margin-top: 2px; word-break: break-word;">${item.nombre}</h3>
                             <p style="font-size: 11px; opacity: 0.85; margin-top: 2px;">$${item.precio.toLocaleString()} ${sinStock ? '• <b style="color:#ef4444;">AGOTADO</b>' : ''}</p>
                         </div>
                         <div style="display: flex; align-items: center; gap: 6px; flex-shrink: 0;">
@@ -272,17 +272,10 @@ function mostrarCliente(id, registrarHistorial = true) {
     `;
 
     if(id === 1) {
-        let estiloPlatos = categoriaActiva === 'platos' ? 'background: var(--azul-rapidin); color: #fff;' : 'background: #fff; color: var(--azul-rapidin);';
-        let estiloPlatosSvg = categoriaActiva === 'platos' ? 'fill: var(--naranja-rapidin);' : 'fill: var(--azul-rapidin);';
-
-        let estiloKiosco = categoriaActiva === 'kiosco' ? 'background: var(--azul-rapidin); color: #fff;' : 'background: #fff; color: var(--azul-rapidin);';
-        let estiloKioscoSvg = categoriaActiva === 'kiosco' ? 'fill: var(--naranja-rapidin);' : 'fill: var(--azul-rapidin);';
-
-        let estiloCafeteria = categoriaActiva === 'cafeteria' ? 'background: var(--azul-rapidin); color: #fff;' : 'background: #fff; color: var(--azul-rapidin);';
-        let estiloCafeteriaSvg = categoriaActiva === 'cafeteria' ? 'fill: var(--naranja-rapidin);' : 'fill: var(--azul-rapidin);';
-
-        let estiloBebidas = categoriaActiva === 'bebidas' ? 'background: var(--azul-rapidin); color: #fff;' : 'background: #fff; color: var(--azul-rapidin);';
-        let estiloBebidasSvg = categoriaActiva === 'bebidas' ? 'fill: var(--naranja-rapidin);' : 'fill: var(--azul-rapidin);';
+        let activoPlatos = categoriaActiva === 'platos' ? 'active' : '';
+        let activoKiosco = categoriaActiva === 'kiosco' ? 'active' : '';
+        let activoCafeteria = categoriaActiva === 'cafeteria' ? 'active' : '';
+        let activoBebidas = categoriaActiva === 'bebidas' ? 'active' : '';
 
         container.innerHTML = `
             <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 5px;">
@@ -299,20 +292,20 @@ function mostrarCliente(id, registrarHistorial = true) {
             <div id="contenedor-categorias-html">
                 <div style="font-weight: 700; font-size: 14px; color: var(--azul-rapidin); margin-bottom: 8px;">Categorías:</div>
                 <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 14px;">
-                    <div onclick="filtrarCategoria('platos')" class="app-card" style="${estiloPlatos} padding: 14px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; cursor: pointer;">
-                        <svg style="width: 26px; height: 26px; ${estiloPlatosSvg}" viewBox="0 0 24 24"><path d="M11 9H9V2H7v7H5V2H3v7c0 2.12 1.66 3.84 3.75 3.97V22h2.5v-9.03C11.34 12.84 13 11.12 13 9V2h-2v7zm5-3v8h2.5v8H21V2c-2.76 0-5 2.24-5 4z"/></svg>
+                    <div onclick="filtrarCategoria('platos')" class="categoria-card ${activoPlatos}">
+                        <svg viewBox="0 0 24 24"><path d="M11 9H9V2H7v7H5V2H3v7c0 2.12 1.66 3.84 3.75 3.97V22h2.5v-9.03C11.34 12.84 13 11.12 13 9V2h-2v7zm5-3v8h2.5v8H21V2c-2.76 0-5 2.24-5 4z"/></svg>
                         <span style="font-size: 12px; font-weight: 700;">Platos</span>
                     </div>
-                    <div onclick="filtrarCategoria('kiosco')" class="app-card" style="${estiloKiosco} padding: 14px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; cursor: pointer;">
-                        <svg style="width: 26px; height: 26px; ${estiloKioscoSvg}" viewBox="0 0 24 24"><path d="M20 4H4v2h16V4m1 10v-2l-1-5H4l-1 5v2h1v6h10v-6h4v6h2v-6h1m-9 4H6v-4h6v4z"/></svg>
+                    <div onclick="filtrarCategoria('kiosco')" class="categoria-card ${activoKiosco}">
+                        <svg viewBox="0 0 24 24"><path d="M20 4H4v2h16V4m1 10v-2l-1-5H4l-1 5v2h1v6h10v-6h4v6h2v-6h1m-9 4H6v-4h6v4z"/></svg>
                         <span style="font-size: 12px; font-weight: 700;">Kiosco</span>
                     </div>
-                    <div onclick="filtrarCategoria('cafeteria')" class="app-card" style="${estiloCafeteria} padding: 14px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; cursor: pointer;">
-                        <svg style="width: 26px; height: 26px; ${estiloCafeteriaSvg}" viewBox="0 0 24 24"><path d="M2 21h18v-2H2M20 8h-2V5h2m0-2H4v10a4 4 0 0 0 4 4h6a4 4 0 0 0 4-4v-3h2a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2z"/></svg>
+                    <div onclick="filtrarCategoria('cafeteria')" class="categoria-card ${activoCafeteria}">
+                        <svg viewBox="0 0 24 24"><path d="M2 21h18v-2H2M20 8h-2V5h2m0-2H4v10a4 4 0 0 0 4 4h6a4 4 0 0 0 4-4v-3h2a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2z"/></svg>
                         <span style="font-size: 12px; font-weight: 700;">Cafetería</span>
                     </div>
-                    <div onclick="filtrarCategoria('bebidas')" class="app-card" style="${estiloBebidas} padding: 14px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; cursor: pointer;">
-                        <svg style="width: 26px; height: 26px; ${estiloBebidasSvg}" viewBox="0 0 24 24"><path d="M3 2l2.01 18.23C5.13 21.23 5.97 22 7 22h10c1.03 0 1.87-.77 1.99-1.77L21 2H3zm9 17c-1.66 0-3-1.34-3-3 0-2 3-5.4 3-5.4s3 3.4 3 5.4c0 1.66-1.34 3-3 3zm6.33-13H5.67l-.44-4h13.54l-.44 4z"/></svg>
+                    <div onclick="filtrarCategoria('bebidas')" class="categoria-card ${activoBebidas}">
+                        <svg viewBox="0 0 24 24"><path d="M3 2l2.01 18.23C5.13 21.23 5.97 22 7 22h10c1.03 0 1.87-.77 1.99-1.77L21 2H3zm9 17c-1.66 0-3-1.34-3-3 0-2 3-5.4 3-5.4s3 3.4 3 5.4c0 1.66-1.34 3-3 3zm6.33-13H5.67l-.44-4h13.54l-.44 4z"/></svg>
                         <span style="font-size: 12px; font-weight: 700;">Bebidas</span>
                     </div>
                 </div>
@@ -327,7 +320,7 @@ function mostrarCliente(id, registrarHistorial = true) {
             container.innerHTML = `
                 <div style="text-align: center; margin-top: 100px; color: var(--azul-rapidin);">
                     <svg style="width:48px; height:48px; fill:var(--naranja-rapidin); margin-bottom:15px;" viewBox="0 0 24 24"><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8zm2 16H8v-2h8zm0-4H8v-2h8zm-3-5V3.5L18.5 9z"/></svg>
-                    <h3 style="font-family: 'Rhodesia'; font-size: 20px;">No tenés ningún ticket activo</h3>
+                    <h3 class="app-title" style="font-size: 18px; text-align: center; margin-top: 15px;">No tenés ningún ticket activo</h3>
                     <p style="font-size: 13px; color: var(--gris-texto); margin: 10px 0 20px 0;">Armá tu pedido en el menú y abonalo para generar tu código QR de retiro.</p>
                     <button onclick="mostrarCliente(1)" style="background: var(--naranja-rapidin); border: none; padding: 12px 24px; border-radius: 16px; font-weight: 700; cursor: pointer; color: var(--azul-rapidin);">Ir al Menú</button>
                 </div>
@@ -336,7 +329,7 @@ function mostrarCliente(id, registrarHistorial = true) {
         }
 
         container.innerHTML = `
-            <div style="font-weight: 700; color: var(--azul-rapidin); margin-top: 5px; margin-bottom: 8px; font-size: 15px;">Tus Tickets Activos (${misTicketsActivos.length})</div>
+            <div class="app-title">Tus Tickets Activos (${misTicketsActivos.length})</div>
             <div style="display: flex; flex-direction: column; gap: 12px; max-height: 520px; overflow-y: auto;">
                 ${misTicketsActivos.map(ticket => {
                     let esListo = ticket.estado === "Listo para retirar";
@@ -370,7 +363,7 @@ function mostrarCliente(id, registrarHistorial = true) {
         `;
     } else if(id === 4) {
         container.innerHTML = `
-            <div style="font-weight: 800; font-size: 18px; font-family: 'Rhodesia'; color: var(--azul-rapidin); margin-top: 5px;">Tus Pedidos Realizados</div>
+            <div class="app-title">Tus Pedidos Realizados</div>
             <div style="display: flex; flex-direction: column; gap: 12px; margin-top: 4px;">
                 ${misPedidosHistorial.length > 0 ? misPedidosHistorial.map(ord => `
                     <div class="app-card" style="border-left: 6px solid #27ae60;">
@@ -388,7 +381,7 @@ function mostrarCliente(id, registrarHistorial = true) {
         let itemsEnCarrito = stockBuffet.filter(i => i.qty > 0);
         
         container.innerHTML = `
-            <div style="font-weight: 700; color: var(--azul-rapidin); margin-top: 5px; font-size: 15px;">Revisá y modificá tu pedido:</div>
+            <div class="app-title">Revisá y modificá tu pedido:</div>
             
             <div class="app-card" style="max-height: 160px; overflow-y: auto;">
                 ${itemsEnCarrito.length > 0 ? itemsEnCarrito.map(i => {
@@ -563,12 +556,11 @@ function cerrarModalProducto() {
         modalOverlay.style.display = 'none';
     }
 }
-// Agregá este event listener para cerrar el modal al tocar fuera de él
+
 document.addEventListener('DOMContentLoaded', () => {
     let modalProducto = document.getElementById('modal-producto');
     if (modalProducto) {
         modalProducto.addEventListener('click', (e) => {
-            // Si el click ocurre exactamente en el fondo oscuro y no dentro del contenido blanco
             if (e.target === modalProducto) {
                 cerrarModalProducto();
             }
