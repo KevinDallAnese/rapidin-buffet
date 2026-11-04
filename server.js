@@ -53,19 +53,18 @@ let estadoBuffet = {
     tiempoEspera: 5
 };
 
+// Variable global para el Modo Autónomo
+let modoAutonomo = false;
+
 async function cargarDatosDesdeDB() {
     try {
-        // 1. Incluimos 'imagen' en la consulta a la base de datos
         const resProductos = await pool.query('SELECT id, nombre, precio, stock, categoria, imagen FROM productos ORDER BY id ASC');
         
         estadoBuffet.stock = resProductos.rows.map(p => {
             let cat = (p.categoria || 'platos').toLowerCase();
             let imgDefault = "https://images.unsplash.com/photo-1547592166-23ac45744acd?w=150&auto=format&fit=crop&q=80";
-
-            // 2. Tomamos la imagen de la BD (o la por defecto si está vacía)
             let imgUrl = p.imagen ? p.imagen : imgDefault;
 
-            // 3. Traductor automático para enlaces de Google Drive individuales
             if (imgUrl.includes('drive.google.com')) {
                 let match = imgUrl.match(/\/d\/([a-zA-Z0-9_-]+)/) || imgUrl.match(/id=([a-zA-Z0-9_-]+)/);
                 if (match && match[1]) {
@@ -116,6 +115,13 @@ cargarDatosDesdeDB();
 
 io.on('connection', (socket) => {
     console.log('Usuario conectado:', socket.id);
+
+    // Listener global para prender/apagar el modo autónomo
+    socket.on('toggle-autonomia', (estado) => {
+        modoAutonomo = estado;
+        console.log(` Modo autónomo global: ${modoAutonomo ? 'ACTIVADO' : 'APAGADO'}`);
+    });
+
     socket.emit('actualizar-estado', estadoBuffet);
 
     socket.on('nuevo-pedido', async (data) => {
@@ -155,6 +161,63 @@ io.on('connection', (socket) => {
             io.emit('actualizar-estado', estadoBuffet);
             io.emit('alerta-nueva-orden', data.orden);
             console.log(`✅ Pedido #${codigoTicket} guardado en Neon con éxito.`);
+
+            // SIMULACIÓN AUTÓNOMA, RÁPIDA Y RE-STOCK ROBUSTO PARA LA MUESTRA
+            if (modoAutonomo) {
+                // 1. A los 5 segundos pasa a "Listo para retirar"
+                setTimeout(async () => {
+                    let indexOrden = estadoBuffet.pedidos.findIndex(o => o.codigoTicket === codigoTicket);
+                    if (indexOrden !== -1 && estadoBuffet.pedidos[indexOrden].estado === "En preparación") {
+                        estadoBuffet.pedidos[indexOrden].estado = "Listo para retirar";
+                        
+                        await pool.query(
+                            'UPDATE pedidos SET estado = $1 WHERE id = $2',
+                            ["Listo para retirar", nuevoPedidoId]
+                        );
+
+                        io.emit('actualizar-estado', estadoBuffet);
+                        console.log(` [Modo Autónomo] Orden #${codigoTicket} lista para retirar.`);
+
+                        // 2. A los 8 segundos más, se marca como "Entregado", se archiva Y SE REPONE EL STOCK
+                        setTimeout(async () => {
+                            let indexActual = estadoBuffet.pedidos.findIndex(o => o.codigoTicket === codigoTicket);
+                            if (indexActual !== -1 && estadoBuffet.pedidos[indexActual].estado === "Listo para retirar") {
+                                let ordenEntregada = estadoBuffet.pedidos.splice(indexActual, 1)[0];
+                                ordenEntregada.estado = "Entregado";
+                                estadoBuffet.historial.unshift(ordenEntregada);
+
+                                await pool.query(
+                                    'UPDATE pedidos SET estado = $1 WHERE id = $2',
+                                    ["Entregado", nuevoPedidoId]
+                                );
+
+                                // RE-STOCK AUTOMÁTICO SEGURO (Búsqueda robusta por ID o Nombre)
+                                for (let itemPedido of data.items) {
+                                    let itemStock = estadoBuffet.stock.find(s => 
+                                        s.id == itemPedido.id || 
+                                        s.nombre.toLowerCase().trim() === (itemPedido.nombre || '').toLowerCase().trim()
+                                    );
+
+                                    if (itemStock) {
+                                        itemStock.stock = 50; 
+                                        await pool.query(
+                                            'UPDATE productos SET stock = $1 WHERE id = $2',
+                                            [50, itemStock.id]
+                                        );
+                                        console.log(`🔄 [Re-stock] Producto "${itemStock.nombre}" restablecido a 50.`);
+                                    }
+                                }
+
+                                await cargarDatosDesdeDB();
+
+                                estadoBuffet.tiempoEspera = estadoBuffet.pedidos.length === 0 ? 0 : 4 + (estadoBuffet.pedidos.length * 3);
+                                io.emit('actualizar-estado', estadoBuffet);
+                                console.log(` [Modo Autónomo] Pedido archivado y stock repuesto automáticamente a 50.`);
+                            }
+                        }, 8000); 
+                    }
+                }, 5000); 
+            }
 
         } catch (error) {
             console.error("❌ Error al procesar y guardar el nuevo pedido:", error);
