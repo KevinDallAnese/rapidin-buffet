@@ -249,3 +249,22 @@ function actualizarVistaAdmin() {
         `;
     }
 }
+
+let autonomoActivo = false;
+
+function toggleModoAutonomo() {
+    autonomoActivo = !autonomoActivo;
+    let btn = document.getElementById('btn-autonomo');
+    
+    if (autonomoActivo) {
+        btn.style.background = '#27ae60';
+        btn.style.color = '#fff';
+        btn.innerText = ' Autónomo: ON';
+    } else {
+        btn.style.background = '#e2e8f0';
+        btn.style.color = '#334155';
+        btn.innerText = ' Autónomo: OFF';
+    }
+    
+    socket.emit('toggle-autonomia', autonomoActivo);
+}
