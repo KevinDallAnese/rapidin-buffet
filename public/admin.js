@@ -4,11 +4,35 @@ let stockActual = [];
 let pedidosActuales = [];
 let historialActual = [];
 let pestanaAdminActiva = 'pedidos';
+let autonomoActivo = false;
+
+function actualizarBotonAutonomo(activo) {
+    autonomoActivo = Boolean(activo);
+    let btn = document.getElementById('btn-autonomo');
+    if (!btn) return;
+
+    if (autonomoActivo) {
+        btn.style.background = '#27ae60';
+        btn.style.color = '#fff';
+        btn.innerText = 'Autónomo: ON';
+    } else {
+        btn.style.background = '#e2e8f0';
+        btn.style.color = '#334155';
+        btn.innerText = 'Autónomo: OFF';
+    }
+}
+
+socket.on('estado-autonomia', (estado) => {
+    actualizarBotonAutonomo(estado);
+});
 
 socket.on('actualizar-estado', (data) => {
     stockActual = data.stock;
     pedidosActuales = data.pedidos;
     historialActual = data.historial;
+    if (typeof data.modoAutonomo !== 'undefined') {
+        actualizarBotonAutonomo(data.modoAutonomo);
+    }
     actualizarVistaAdmin();
 });
 
@@ -35,7 +59,7 @@ socket.on('alerta-nueva-orden', (orden) => {
 });
 
 window.addEventListener('keydown', (e) => {
-    if (e.code === 'Space' && pedidosActuales.length > 0) {
+    if (e.code === 'Space' && pedidosActuales.length > 0 && document.activeElement.tagName !== 'INPUT') {
         e.preventDefault();
         cambiarEstado(0);
     }
@@ -163,7 +187,7 @@ function actualizarVistaAdmin() {
     if (pestanaAdminActiva === 'pedidos') {
         contenedor.innerHTML = `
             <div style="font-weight: 700; color: var(--azul-rapidin); font-size: 14px; margin-bottom: 2px; flex-shrink: 0;">Órdenes Activas en Cocina:</div>
-            <div style="display: flex; flex-direction: column; gap: 12px; overflow-y: auto; flex-grow: 1; min-height: 0; padding-bottom: 10px;">
+            <div style="display: flex; flex-direction: column; gap: 12px; overflow-y: auto; flex: 1; min-height: 0; padding-bottom: 10px;">
                 ${pedidosActuales.length > 0 ? pedidosActuales.map((p, idx) => {
                     let esPreparacion = p.estado === "En preparación";
                     let btnTexto = esPreparacion ? "Marcar Listo para Retirar" : "Marcar Entregado";
@@ -188,7 +212,7 @@ function actualizarVistaAdmin() {
     } else if (pestanaAdminActiva === 'historial') {
         contenedor.innerHTML = `
             <div style="font-weight: 700; color: var(--azul-rapidin); font-size: 14px; margin-bottom: 2px; flex-shrink: 0;">Historial de Órdenes Entregadas:</div>
-            <div style="display: flex; flex-direction: column; gap: 12px; overflow-y: auto; flex-grow: 1; min-height: 0; padding-bottom: 10px;">
+            <div style="display: flex; flex-direction: column; gap: 12px; overflow-y: auto; flex: 1; min-height: 0; padding-bottom: 10px;">
                 ${historialActual.length > 0 ? historialActual.map(h => `
                     <div class="app-card" style="border-left: 6px solid #27ae60; flex-shrink: 0;">
                         <div style="display:flex; justify-content:space-between; font-weight:700; font-size:13px;">
@@ -225,7 +249,7 @@ function actualizarVistaAdmin() {
                 <button type="submit" style="background: var(--naranja-rapidin); color: var(--azul-rapidin); border: none; padding: 10px; border-radius: 12px; font-weight: 800; font-size: 12px; cursor: pointer; box-shadow: 0 4px 12px rgba(230,126,34,0.2);">Guardar Producto</button>
             </form>
 
-            <div style="display: flex; flex-direction: column; gap: 10px; overflow-y: auto; flex-grow: 1; min-height: 0; padding-bottom: 10px;">
+            <div style="display: flex; flex-direction: column; gap: 10px; overflow-y: auto; flex: 1; min-height: 0; padding-bottom: 10px;">
                 ${stockActual.map((item, idx) => {
                     let sinStock = item.stock <= 0;
                     return `
@@ -250,21 +274,8 @@ function actualizarVistaAdmin() {
     }
 }
 
-let autonomoActivo = false;
-
 function toggleModoAutonomo() {
-    autonomoActivo = !autonomoActivo;
-    let btn = document.getElementById('btn-autonomo');
-    
-    if (autonomoActivo) {
-        btn.style.background = '#27ae60';
-        btn.style.color = '#fff';
-        btn.innerText = ' Autónomo: ON';
-    } else {
-        btn.style.background = '#e2e8f0';
-        btn.style.color = '#334155';
-        btn.innerText = ' Autónomo: OFF';
-    }
-    
-    socket.emit('toggle-autonomia', autonomoActivo);
+    let nuevoEstado = !autonomoActivo;
+    actualizarBotonAutonomo(nuevoEstado);
+    socket.emit('toggle-autonomia', nuevoEstado);
 }
