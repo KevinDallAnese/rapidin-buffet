@@ -93,12 +93,13 @@ h1, h2, h3, h4, h5, h6, p, span, a, button, input {
     body {
         background-color: var(--fondo-app);
         justify-content: flex-start;
-        height: 100vh;
+        height: 100dvh;
         overflow: hidden;
     }
     .phone-frame {
         width: 100vw;
-        height: 100vh;
+        height: 100dvh;
+        margin-top: 0 !important;
         border: none;
         border-radius: 0;
         box-shadow: none;
