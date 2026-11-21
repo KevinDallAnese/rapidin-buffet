@@ -8,28 +8,28 @@
 </head>
 <body>
 
-    <div class="phone-frame" style="margin-top: 20px;">
+    <div class="phone-frame" style="margin-top: 20px; height: calc(100dvh - 40px); max-height: 850px;">
         <div class="phone-header-notch"></div>
 
-        <div id="admin-screen" class="screen-content" style="padding-top: 15px;">
+        <div id="admin-screen" class="screen-content" style="padding-top: 15px; display: flex; flex-direction: column; flex: 1; min-height: 0; overflow: hidden;">
             <!-- HEADER CON BOTÓN DE MODO AUTÓNOMO INTEGRADO -->
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; flex-shrink: 0;">
                 <span style="font-weight: 800; font-size: 20px; font-family: 'Rhodesia'; color: var(--azul-rapidin);">Panel Cocina</span>
                 <div style="display: flex; gap: 8px; align-items: center;">
                     <button onclick="toggleModoAutonomo()" id="btn-autonomo" style="background: #e2e8f0; color: #334155; border: none; padding: 6px 10px; border-radius: 16px; font-weight: 700; font-size: 11px; cursor: pointer; transition: 0.2s;">
-                         Autónomo: OFF
+                        Autónomo: OFF
                     </button>
                     <span style="font-size: 11px; background: var(--naranja-rapidin); color: var(--azul-rapidin); padding: 4px 10px; border-radius: 20px; font-weight: 700;">Admin Buffet</span>
                 </div>
             </div>
 
-            <div id="admin-contenido" style="display: flex; flex-direction: column; gap: 12px; flex-grow: 1;">
+            <div id="admin-contenido" style="display: flex; flex-direction: column; gap: 12px; flex: 1; min-height: 0; overflow: hidden;">
                 <!-- Dinámico -->
             </div>
         </div>
 
         <!-- NAVEGACIÓN ADMIN -->
-        <nav class="bottom-nav" id="admin-nav">
+        <nav class="bottom-nav" id="admin-nav" style="flex-shrink: 0;">
             <button class="nav-icon active" onclick="mostrarBuffet('pedidos')" style="position: relative;" id="nav-pedidos-btn">
                 <svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2m-5 14H7v-2h7zm3-4H7v-2h10zm0-4H7V7h10z"/></svg>
                 Órdenes
