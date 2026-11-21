@@ -2,16 +2,16 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Rapidin - Panel Buffet</title>
     <link rel="stylesheet" href="styles.css">
 </head>
-<body style="margin: 0; padding: 0; overflow: hidden; height: 100dvh; display: flex; justify-content: center; align-items: center;">
+<body>
 
-    <div class="phone-frame" style="margin: 0; height: 100dvh; max-height: 100dvh; display: flex; flex-direction: column; overflow: hidden;">
+    <div class="phone-frame" style="margin-top: 20px;">
         <div class="phone-header-notch"></div>
 
-        <div id="admin-screen" class="screen-content" style="padding-top: 15px; display: flex; flex-direction: column; flex: 1; min-height: 0; overflow: hidden;">
+        <div id="admin-screen" class="screen-content" style="padding-top: 15px; overflow: hidden;">
             <!-- HEADER CON BOTÓN DE MODO AUTÓNOMO INTEGRADO -->
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; flex-shrink: 0;">
                 <span style="font-weight: 800; font-size: 20px; font-family: 'Rhodesia'; color: var(--azul-rapidin);">Panel Cocina</span>
@@ -29,7 +29,7 @@
         </div>
 
         <!-- NAVEGACIÓN ADMIN -->
-        <nav class="bottom-nav" id="admin-nav" style="flex-shrink: 0;">
+        <nav class="bottom-nav" id="admin-nav">
             <button class="nav-icon active" onclick="mostrarBuffet('pedidos')" style="position: relative;" id="nav-pedidos-btn">
                 <svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2m-5 14H7v-2h7zm3-4H7v-2h10zm0-4H7V7h10z"/></svg>
                 Órdenes
