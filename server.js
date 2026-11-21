@@ -50,14 +50,39 @@ let estadoBuffet = {
     stock: [], 
     pedidos: [],
     historial: [],
-    tiempoEspera: 5
+    tiempoEspera: 5,
+    modoAutonomo: false
 };
 
-// Variable global para el Modo Autónomo
 let modoAutonomo = false;
+
+async function inicializarConfigAutonomia() {
+    try {
+        await pool.query(`
+            CREATE TABLE IF NOT EXISTS config_sistema (
+                clave VARCHAR(50) PRIMARY KEY,
+                valor BOOLEAN NOT NULL
+            )
+        `);
+        await pool.query(`
+            INSERT INTO config_sistema (clave, valor)
+            VALUES ('modo_autonomo', false)
+            ON CONFLICT (clave) DO NOTHING
+        `);
+        const res = await pool.query(`SELECT valor FROM config_sistema WHERE clave = 'modo_autonomo'`);
+        if (res.rows.length > 0) {
+            modoAutonomo = res.rows[0].valor;
+            estadoBuffet.modoAutonomo = modoAutonomo;
+        }
+    } catch (error) {
+        console.error("❌ Error al cargar config de autonomía:", error);
+    }
+}
 
 async function cargarDatosDesdeDB() {
     try {
+        await inicializarConfigAutonomia();
+
         const resProductos = await pool.query('SELECT id, nombre, precio, stock, categoria, imagen FROM productos ORDER BY id ASC');
         
         estadoBuffet.stock = resProductos.rows.map(p => {
@@ -105,7 +130,7 @@ async function cargarDatosDesdeDB() {
 
         estadoBuffet.tiempoEspera = estadoBuffet.pedidos.length === 0 ? 0 : 4 + (estadoBuffet.pedidos.length * 3);
 
-        console.log("📦 Datos y productos sincronizados desde Neon correctamente.");
+        console.log(`📦 Datos sincronizados desde Neon. Modo autónomo: ${modoAutonomo ? 'ON' : 'OFF'}`);
     } catch (error) {
         console.error("❌ Error al sincronizar con la base de datos:", error);
     }
@@ -116,13 +141,26 @@ cargarDatosDesdeDB();
 io.on('connection', (socket) => {
     console.log('Usuario conectado:', socket.id);
 
-    // Listener global para prender/apagar el modo autónomo
-    socket.on('toggle-autonomia', (estado) => {
-        modoAutonomo = estado;
-        console.log(` Modo autónomo global: ${modoAutonomo ? 'ACTIVADO' : 'APAGADO'}`);
-    });
-
+    // Enviar estado actual (incluye modoAutonomo) apenas se conecta
     socket.emit('actualizar-estado', estadoBuffet);
+    socket.emit('estado-autonomia', modoAutonomo);
+
+    // Listener global para prender/apagar el modo autónomo y guardarlo en Neon
+    socket.on('toggle-autonomia', async (estado) => {
+        modoAutonomo = Boolean(estado);
+        estadoBuffet.modoAutonomo = modoAutonomo;
+        try {
+            await pool.query(
+                `UPDATE config_sistema SET valor = $1 WHERE clave = 'modo_autonomo'`,
+                [modoAutonomo]
+            );
+        } catch (error) {
+            console.error("❌ Error al guardar estado de autonomía:", error);
+        }
+        io.emit('estado-autonomia', modoAutonomo);
+        io.emit('actualizar-estado', estadoBuffet);
+        console.log(`Modo autónomo global: ${modoAutonomo ? 'ACTIVADO' : 'APAGADO'}`);
+    });
 
     socket.on('nuevo-pedido', async (data) => {
         try {
@@ -164,7 +202,6 @@ io.on('connection', (socket) => {
 
             // SIMULACIÓN AUTÓNOMA, RÁPIDA Y RE-STOCK ROBUSTO PARA LA MUESTRA
             if (modoAutonomo) {
-                // 1. A los 5 segundos pasa a "Listo para retirar"
                 setTimeout(async () => {
                     let indexOrden = estadoBuffet.pedidos.findIndex(o => o.codigoTicket === codigoTicket);
                     if (indexOrden !== -1 && estadoBuffet.pedidos[indexOrden].estado === "En preparación") {
@@ -176,9 +213,8 @@ io.on('connection', (socket) => {
                         );
 
                         io.emit('actualizar-estado', estadoBuffet);
-                        console.log(` [Modo Autónomo] Orden #${codigoTicket} lista para retirar.`);
+                        console.log(`[Modo Autónomo] Orden #${codigoTicket} lista para retirar.`);
 
-                        // 2. A los 8 segundos más, se marca como "Entregado", se archiva Y SE REPONE EL STOCK
                         setTimeout(async () => {
                             let indexActual = estadoBuffet.pedidos.findIndex(o => o.codigoTicket === codigoTicket);
                             if (indexActual !== -1 && estadoBuffet.pedidos[indexActual].estado === "Listo para retirar") {
@@ -191,7 +227,6 @@ io.on('connection', (socket) => {
                                     ["Entregado", nuevoPedidoId]
                                 );
 
-                                // RE-STOCK AUTOMÁTICO SEGURO (Búsqueda robusta por ID o Nombre)
                                 for (let itemPedido of data.items) {
                                     let itemStock = estadoBuffet.stock.find(s => 
                                         s.id == itemPedido.id || 
@@ -212,7 +247,7 @@ io.on('connection', (socket) => {
 
                                 estadoBuffet.tiempoEspera = estadoBuffet.pedidos.length === 0 ? 0 : 4 + (estadoBuffet.pedidos.length * 3);
                                 io.emit('actualizar-estado', estadoBuffet);
-                                console.log(` [Modo Autónomo] Pedido archivado y stock repuesto automáticamente a 50.`);
+                                console.log(`[Modo Autónomo] Pedido archivado y stock repuesto automáticamente a 50.`);
                             }
                         }, 8000); 
                     }
