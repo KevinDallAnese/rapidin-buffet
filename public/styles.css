@@ -90,18 +90,16 @@ h1, h2, h3, h4, h5, h6, p, span, a, button, input {
 }
 
 @media screen and (max-width: 480px) {
-    html, body {
+    body {
         background-color: var(--fondo-app);
-        height: 100%;
+        justify-content: flex-start;
+        height: 100dvh;
         overflow: hidden;
-        overscroll-behavior: none;
     }
     .phone-frame {
-        position: fixed;
-        inset: 0;
-        width: 100%;
-        height: 100%;
-        margin: 0;
+        width: 100vw;
+        height: 100dvh;
+        margin-top: 0 !important;
         border: none;
         border-radius: 0;
         box-shadow: none;
